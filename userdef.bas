@@ -349,3 +349,51 @@ End If
 End Function
 
 
+Function ConcateData(i As Double, j As Double, k As Double, trun_num As Integer, multiplier As Integer)
+'三个数据连成字符串输出，i,j,k为三个等连接的数字
+'trun_num:是数据截取的位数
+'multiplier:数据放大的倍数
+Dim str As String
+Dim i1 As Double
+Dim i2 As Double
+Dim i3 As Double
+
+    i1 = Round(i * multiplier, trun_num)
+    i2 = Round(j * multiplier, trun_num)
+    i3 = Round(k * multiplier, trun_num)
+
+    ConcateData = CStr(i1) + "," + CStr(i2) + "," + CStr(i3)
+    
+End Function
+
+
+Function MethodCompare(s1 As String, s2 As String)
+'根据传进来两个字符串，生成模式比较
+'s1: 第一个，胜，平，负
+'s2: 第二个，胜，平，负
+Dim a1, a2, val1, val2, str
+Dim i
+    a1 = Split(s1, ",")
+    a2 = Split(s2, ",")
+    MethodCompare = ""
+    val1 = 0
+    val2 = 0
+    str = Split("3,1,0", ",")
+    For i = 0 To 2
+        val2 = a1(i) - a2(i)
+        If val2 > 0 Then
+            If val2 > val1 Then
+                MethodCompare = str(i) & MethodCompare
+            Else
+                MethodCompare = MethodCompare & str(i)
+            End If
+        End If
+        val1 = val2
+    Next
+        'If (a1(0) - a2(0)) > 0 Then MethodCompare = MethodCompare & "3"
+        'If (a1(1) - a2(1)) > 0 Then MethodCompare = MethodCompare & "1"
+        'If (a1(2) - a2(2)) > 0 Then MethodCompare = MethodCompare & "0"
+    
+End Function
+
+
