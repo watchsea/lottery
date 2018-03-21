@@ -683,6 +683,7 @@ If usrCol = 0 Then
     Exit Sub
 End If
 
+
 dataWcol = dataColDict.Item("DATAW")
 dataBcol = dataColDict.Item("DATAB")
 dataMcol = dataColDict.Item("DATAM")
@@ -1190,12 +1191,22 @@ Dim offset4 As Integer         '至第4个数据的偏移量
 Dim schemaCol As Integer
 Dim schemaCol4 As Integer
 Dim schemaCol5 As Integer
+Dim schemaCol6 As Integer
+Dim schemaCol7 As Integer
+Dim schemaCol8 As Integer
+
 
 Dim dataCol(5)
 Dim formulaStr As String    '模式四的计算公式
 Dim formulaStr5 As String    '模式五的计算公式
 Dim formulaStr7 As String   '模式七的计算公式
 Dim formulaStr8 As String   '模式八的计算公式
+
+'add by ljqu 2018.3.18
+Dim param4 As String
+Dim param5 As String
+Dim param7 As String
+Dim param8 As String
 
 
 upColor = vbRed
@@ -1213,6 +1224,18 @@ cnt = dataSheet.UsedRange.Rows(dataSheet.UsedRange.Rows.Count).row
 ReDim data(cnt - 4, 23) '对应worksheet中的行号，日期，联赛，对阵，数据类型，五组数据（每组3个)，模式四组（1-4）
 
 Call 初始化一般字典(dataColDict, dataSheet, 4, 0, 1, False)
+
+
+'判断最近升级是否完毕
+usrCol = dataColDict.Item("SCHEMA4")
+If usrCol = 0 Then
+    MsgBox ("2018.3.20升级未完成！现在将进行升级....")
+    Call 程序升级
+    '升级完后要重载一次字典
+    Call 初始化一般字典(dataColDict, dataSheet, 4, 0, 1, False)
+End If
+
+
 dataCol(0) = dataColDict.Item("DATAW")
 dataCol(1) = dataColDict.Item("DATAB")
 dataCol(2) = dataColDict.Item("DATAM")
@@ -1228,7 +1251,20 @@ panmCol = dataColDict.Item("PANM")
 
 
 schemaCol = dataColDict.Item("SCHEMA")
+schemaCol4 = dataColDict.Item("SCHEMA4")   '模式四的起始列
+schemaCol5 = dataColDict.Item("SCHEMA5")   '模式五的起始列
+schemaCol6 = dataColDict.Item("SCHEMA6")   '模式六的起始列
+schemaCol7 = dataColDict.Item("SCHEMA7")   '模式七的起始列
+schemaCol8 = dataColDict.Item("SCHEMA8")   '模式八的起始列
 
+
+
+'判断最近升级是否完毕
+usrCol = dataColDict.Item("SCHEMA4")
+If usrCol = 0 Then
+    MsgBox ("2018.3.20升级未完成！现在将进行升级....")
+    Call 程序升级
+End If
 
 
 '将数据取到内存数组中
@@ -1276,8 +1312,6 @@ Call 模式计算一(data, "0,4,3", "W,E,L", 5, 22, 1)   '模式三
 
 
 '求模式四的计算公式
-schemaCol4 = schemaCol + 3   '模式四的起始列
-schemaCol5 = schemaCol + 4   '模式五的起始列
 
 offset1 = dataCol(0) - schemaCol4    '威廉希尔起始列-模式四起始列
 offset2 = dataCol(1) - schemaCol4    'Bet365起始列-模式四起始列
@@ -1286,58 +1320,71 @@ offset4 = LOSE1col - schemaCol4   '赔1起始列-模式四起始列
 
 '生成模式四的脚本
 formulaStr = "=模式四("
+param4 = "=ConcateData("
 For i = 0 To 2
+    j = 1    '模式数据与模式范式所相隔的列数间隔
+    param4 = param4 + "sum(RC[" + Trim(str(offset1 + i - j)) + "],RC[" + Trim(str(offset2 + i - j)) + "],RC[" + Trim(str(offset3 + i - j)) + "])/3-RC[" + Trim(str(offset4 + i - j)) + "],"
     formulaStr = formulaStr + "sum(RC[" + Trim(str(offset1 + i)) + "],RC[" + Trim(str(offset2 + i)) + "],RC[" + Trim(str(offset3 + i)) + "])/3-RC[" + Trim(str(offset4 + i)) + "]" + IIf(i <> 2, ",", "")
 Next
+param4 = param4 + "4,100)"
 formulaStr = formulaStr + ")"
 
 
 '求模式五的计算公式
-schemaCol4 = schemaCol + 4   '模式五的起始列
 
-offset1 = dataCol(0) - schemaCol4    '威廉希尔起始列-模式四起始列
-offset2 = dataCol(3) - schemaCol4    'Bet365起始列-模式四起始列
-offset3 = dataCol(4) - schemaCol4    '澳门网起始列-模式四起始列
-offset4 = LOSE1col - schemaCol4   '赔1起始列-模式四起始列
+offset1 = dataCol(0) - schemaCol5    '威廉希尔起始列-模式五起始列
+offset2 = dataCol(3) - schemaCol5    'Bet365起始列-模式五起始列
+offset3 = dataCol(4) - schemaCol5    '澳门网起始列-模式五起始列
+offset4 = LOSE1col - schemaCol5   '赔1起始列-模式五起始列
 
 '生成模式五的脚本
 formulaStr5 = "=模式四("
+param5 = "=ConcateData("
 For i = 0 To 2
+    j = 1    '模式数据与模式范式所相隔的列数间隔
+    param5 = param5 + "sum(RC[" + Trim(str(offset1 + i - j)) + "],RC[" + Trim(str(offset2 + i - j)) + "],RC[" + Trim(str(offset3 + i - j)) + "])/3-RC[" + Trim(str(offset4 + i - j)) + "],"
     formulaStr5 = formulaStr5 + "sum(RC[" + Trim(str(offset1 + i)) + "],RC[" + Trim(str(offset2 + i)) + "],RC[" + Trim(str(offset3 + i)) + "])/3-RC[" + Trim(str(offset4 + i)) + "]" + IIf(i <> 2, ",", "")
 Next
+param5 = param5 + "4,100)"
 formulaStr5 = formulaStr5 + ")"
 
 
 
 '求模式七的计算公式
-schemaCol4 = schemaCol + 6   '模式四的起始列
 
-offset1 = dataCol(0) - schemaCol4    '威廉希尔起始列-模式四起始列
-offset2 = dataCol(1) - schemaCol4    'Bet365起始列-模式四起始列
-offset3 = dataCol(2) - schemaCol4    '澳门网起始列-模式四起始列
-offset4 = lose2Col - schemaCol4   '赔1起始列-模式四起始列
+offset1 = dataCol(0) - schemaCol7    '威廉希尔起始列-模式七起始列
+offset2 = dataCol(1) - schemaCol7    'Bet365起始列-模式七起始列
+offset3 = dataCol(2) - schemaCol7    '澳门网起始列-模式七起始列
+offset4 = lose2Col - schemaCol7   '赔1起始列-模式七起始列
 
 '生成模式七的脚本
 formulaStr7 = "=模式四("
+param7 = "=ConcateData("
 For i = 0 To 2
+    j = 1    '模式数据与模式范式所相隔的列数间隔
+    param7 = param7 + "sum(RC[" + Trim(str(offset1 + i - j)) + "],RC[" + Trim(str(offset2 + i - j)) + "],RC[" + Trim(str(offset3 + i - j)) + "])/3-RC[" + Trim(str(offset4 + i - j)) + "],"
     formulaStr7 = formulaStr7 + "sum(RC[" + Trim(str(offset1 + i)) + "],RC[" + Trim(str(offset2 + i)) + "],RC[" + Trim(str(offset3 + i)) + "])/3-RC[" + Trim(str(offset4 + i)) + "]" + IIf(i <> 2, ",", "")
 Next
+param7 = param7 + "4,100)"
 formulaStr7 = formulaStr7 + ")"
 
 
 '求模式八的计算公式
-schemaCol4 = schemaCol + 7   '模式五的起始列
 
-offset1 = dataCol(0) - schemaCol4    '威廉希尔起始列-模式四起始列
-offset2 = dataCol(3) - schemaCol4    'Bet365起始列-模式四起始列
-offset3 = dataCol(4) - schemaCol4    '澳门网起始列-模式四起始列
-offset4 = lose2Col - schemaCol4   '赔1起始列-模式四起始列
+offset1 = dataCol(0) - schemaCol8    '威廉希尔起始列-模式八起始列
+offset2 = dataCol(3) - schemaCol8    'Bet365起始列-模式八起始列
+offset3 = dataCol(4) - schemaCol8    '澳门网起始列-模式八起始列
+offset4 = lose2Col - schemaCol8   '赔1起始列-模式八起始列
 
 '生成模式五的脚本
 formulaStr8 = "=模式四("
+param8 = "=ConcateData("
 For i = 0 To 2
+    j = 1    '模式数据与模式范式所相隔的列数间隔
+    param8 = param8 + "sum(RC[" + Trim(str(offset1 + i - j)) + "],RC[" + Trim(str(offset2 + i - j)) + "],RC[" + Trim(str(offset3 + i - j)) + "])/3-RC[" + Trim(str(offset4 + i - j)) + "],"
     formulaStr8 = formulaStr8 + "sum(RC[" + Trim(str(offset1 + i)) + "],RC[" + Trim(str(offset2 + i)) + "],RC[" + Trim(str(offset3 + i)) + "])/3-RC[" + Trim(str(offset4 + i)) + "]" + IIf(i <> 2, ",", "")
 Next
+param8 = param8 + "4,100)"
 formulaStr8 = formulaStr8 + ")"
 
 
@@ -1350,51 +1397,103 @@ For i = 0 To UBound(data)
         dataSheet.Cells(j, schemaCol) = data(i, 20)
         dataSheet.Cells(j, schemaCol + 1) = data(i, 21)
         dataSheet.Cells(j, schemaCol + 2) = data(i, 22)
-        dataSheet.Cells(j, schemaCol + 3).FormulaR1C1 = formulaStr    'data(i, 23)
-        dataSheet.Cells(j, schemaCol + 4).FormulaR1C1 = formulaStr5    'data(i, 23)
+        dataSheet.Cells(j, schemaCol4).FormulaR1C1 = formulaStr    'data(i, 23)
+        dataSheet.Cells(j, schemaCol4 + 1).FormulaR1C1 = param4  'data(i, 23)
+        
+        dataSheet.Cells(j, schemaCol5).FormulaR1C1 = formulaStr5    'data(i, 23)
+        dataSheet.Cells(j, schemaCol5 + 1).FormulaR1C1 = param5  'data(i, 23)
+        
         If Not (dataSheet.Cells(j, panmCol + 1) = "" And dataSheet.Cells(j + 1, panmCol + 1) = "" And dataSheet.Cells(j + 2, panmCol + 1) = "") Then
-            dataSheet.Cells(j, schemaCol + 5) = dataSheet.Cells(j, panmCol + 1).Text + ":" + dataSheet.Cells(j + 1, panmCol + 1).Text + ":" + dataSheet.Cells(j + 2, panmCol + 1).Text
+            dataSheet.Cells(j, schemaCol6) = dataSheet.Cells(j, panmCol + 1).Text + ":" + dataSheet.Cells(j + 1, panmCol + 1).Text + ":" + dataSheet.Cells(j + 2, panmCol + 1).Text
         End If
-        dataSheet.Cells(j, schemaCol + 6).FormulaR1C1 = formulaStr7    'data(i, 23)
-        dataSheet.Cells(j, schemaCol + 7).FormulaR1C1 = formulaStr8    'data(i, 23)
+        dataSheet.Cells(j, schemaCol7).FormulaR1C1 = formulaStr7    'data(i, 23)
+        dataSheet.Cells(j, schemaCol7 + 1).FormulaR1C1 = param7  'data(i, 23)
+        
+        dataSheet.Cells(j, schemaCol8).FormulaR1C1 = formulaStr8    'data(i, 23)
+        dataSheet.Cells(j, schemaCol8 + 1).FormulaR1C1 = param8  'data(i, 23)
         
         '同时复制到即时值1和即时值2,2017.10.15改为直接计算值
         dataSheet.Cells(j + 1, schemaCol) = data(i + 1, 20)
         dataSheet.Cells(j + 1, schemaCol + 1) = data(i + 1, 21)
         dataSheet.Cells(j + 1, schemaCol + 2) = data(i + 1, 22)
-        dataSheet.Cells(j + 1, schemaCol + 3).FormulaR1C1 = formulaStr ' = dataSheet.Cells(j, schemaCol + 3)
-        dataSheet.Cells(j + 1, schemaCol + 4).FormulaR1C1 = formulaStr5  ' = dataSheet.Cells(j, schemaCol + 4)
-        dataSheet.Cells(j + 1, schemaCol + 5) = dataSheet.Cells(j, schemaCol + 5)
-        dataSheet.Cells(j + 1, schemaCol + 6).FormulaR1C1 = formulaStr7    'data(i, 23)
-        dataSheet.Cells(j + 1, schemaCol + 7).FormulaR1C1 = formulaStr8    'data(i, 23)
+        dataSheet.Cells(j + 1, schemaCol4).FormulaR1C1 = formulaStr ' = dataSheet.Cells(j, schemaCol + 3)
+        dataSheet.Cells(j + 1, schemaCol4 + 1).FormulaR1C1 = param4 'data(i, 23)
+        
+        dataSheet.Cells(j + 1, schemaCol5).FormulaR1C1 = formulaStr5  ' = dataSheet.Cells(j, schemaCol + 4)
+        dataSheet.Cells(j + 1, schemaCol5 + 1).FormulaR1C1 = param5 'data(i, 23)
+        
+        dataSheet.Cells(j + 1, schemaCol6) = dataSheet.Cells(j, schemaCol6)
+        dataSheet.Cells(j + 1, schemaCol7).FormulaR1C1 = formulaStr7    'data(i, 23)
+        dataSheet.Cells(j + 1, schemaCol7 + 1).FormulaR1C1 = param7 'data(i, 23)
+        
+        dataSheet.Cells(j + 1, schemaCol8).FormulaR1C1 = formulaStr8    'data(i, 23)
+        dataSheet.Cells(j + 1, schemaCol8 + 1).FormulaR1C1 = param8 'data(i, 23)
         
         dataSheet.Cells(j + 2, schemaCol) = data(i + 2, 20)
         dataSheet.Cells(j + 2, schemaCol + 1) = data(i + 2, 21)
         dataSheet.Cells(j + 2, schemaCol + 2) = data(i + 2, 22)
-        dataSheet.Cells(j + 2, schemaCol + 3).FormulaR1C1 = formulaStr   ' = dataSheet.Cells(j, schemaCol + 3)
-        dataSheet.Cells(j + 2, schemaCol + 4).FormulaR1C1 = formulaStr5  ' = dataSheet.Cells(j, schemaCol + 4)
-        dataSheet.Cells(j + 2, schemaCol + 5) = dataSheet.Cells(j, schemaCol + 5)
-        dataSheet.Cells(j + 2, schemaCol + 6).FormulaR1C1 = formulaStr7    'data(i, 23)
-        dataSheet.Cells(j + 2, schemaCol + 7).FormulaR1C1 = formulaStr8    'data(i, 23)
+        dataSheet.Cells(j + 2, schemaCol4).FormulaR1C1 = formulaStr   ' = dataSheet.Cells(j, schemaCol + 3)
+        dataSheet.Cells(j + 2, schemaCol4 + 1).FormulaR1C1 = param4 'data(i, 23)
+        
+        dataSheet.Cells(j + 2, schemaCol5).FormulaR1C1 = formulaStr5  ' = dataSheet.Cells(j, schemaCol + 4)
+        dataSheet.Cells(j + 2, schemaCol5 + 1).FormulaR1C1 = param5 'data(i, 23)
+        
+        dataSheet.Cells(j + 2, schemaCol6) = dataSheet.Cells(j, schemaCol6)
+        dataSheet.Cells(j + 2, schemaCol7).FormulaR1C1 = formulaStr7    'data(i, 23)
+        dataSheet.Cells(j + 2, schemaCol7 + 1).FormulaR1C1 = param7 'data(i, 23)
+        
+        dataSheet.Cells(j + 2, schemaCol8).FormulaR1C1 = formulaStr8    'data(i, 23)
+        dataSheet.Cells(j + 2, schemaCol8 + 1).FormulaR1C1 = param8 'data(i, 23)
         
         '将公式转换为值
-        dataSheet.Cells(j, schemaCol + 3) = dataSheet.Cells(j, schemaCol + 3)
-        dataSheet.Cells(j, schemaCol + 4) = dataSheet.Cells(j, schemaCol + 4)
-    
-        dataSheet.Cells(j, schemaCol + 6) = dataSheet.Cells(j, schemaCol + 6)
-        dataSheet.Cells(j, schemaCol + 7) = dataSheet.Cells(j, schemaCol + 7)
+        '初始值
+        dataSheet.Cells(j, schemaCol4) = dataSheet.Cells(j, schemaCol4)
+        dataSheet.Cells(j, schemaCol5) = dataSheet.Cells(j, schemaCol5)
+        dataSheet.Cells(j, schemaCol7) = dataSheet.Cells(j, schemaCol7)
+        dataSheet.Cells(j, schemaCol8) = dataSheet.Cells(j, schemaCol8)
         
-        dataSheet.Cells(j + 1, schemaCol + 3) = dataSheet.Cells(j + 1, schemaCol + 3)
-        dataSheet.Cells(j + 1, schemaCol + 4) = dataSheet.Cells(j + 1, schemaCol + 4)
-        dataSheet.Cells(j + 1, schemaCol + 6) = dataSheet.Cells(j + 1, schemaCol + 6)
-        dataSheet.Cells(j + 1, schemaCol + 7) = dataSheet.Cells(j + 1, schemaCol + 7)
-        
-        dataSheet.Cells(j + 2, schemaCol + 3) = dataSheet.Cells(j + 2, schemaCol + 3)
-        dataSheet.Cells(j + 2, schemaCol + 4) = dataSheet.Cells(j + 2, schemaCol + 4)
-        dataSheet.Cells(j + 2, schemaCol + 6) = dataSheet.Cells(j + 2, schemaCol + 6)
-        dataSheet.Cells(j + 2, schemaCol + 7) = dataSheet.Cells(j + 2, schemaCol + 7)
+        'add by ljqu 2018.3.18
+        dataSheet.Cells(j, schemaCol4 + 1) = dataSheet.Cells(j, schemaCol4 + 1)
+        dataSheet.Cells(j, schemaCol5 + 1) = dataSheet.Cells(j, schemaCol5 + 1)
+        dataSheet.Cells(j, schemaCol7 + 1) = dataSheet.Cells(j, schemaCol7 + 1)
+        dataSheet.Cells(j, schemaCol8 + 1) = dataSheet.Cells(j, schemaCol8 + 1)
         
         
+        '即时值一
+        dataSheet.Cells(j + 1, schemaCol4) = dataSheet.Cells(j + 1, schemaCol4)
+        dataSheet.Cells(j + 1, schemaCol5) = dataSheet.Cells(j + 1, schemaCol5)
+        dataSheet.Cells(j + 1, schemaCol7) = dataSheet.Cells(j + 1, schemaCol7)
+        dataSheet.Cells(j + 1, schemaCol8) = dataSheet.Cells(j + 1, schemaCol8)
+        
+        dataSheet.Cells(j + 1, schemaCol4 + 1) = dataSheet.Cells(j + 1, schemaCol4 + 1)
+        dataSheet.Cells(j + 1, schemaCol5 + 1) = dataSheet.Cells(j + 1, schemaCol5 + 1)
+        dataSheet.Cells(j + 1, schemaCol7 + 1) = dataSheet.Cells(j + 1, schemaCol7 + 1)
+        dataSheet.Cells(j + 1, schemaCol8 + 1) = dataSheet.Cells(j + 1, schemaCol8 + 1)
+        
+        '即时值二
+        dataSheet.Cells(j + 2, schemaCol4) = dataSheet.Cells(j + 2, schemaCol4)
+        dataSheet.Cells(j + 2, schemaCol5) = dataSheet.Cells(j + 2, schemaCol5)
+        dataSheet.Cells(j + 2, schemaCol7) = dataSheet.Cells(j + 2, schemaCol7)
+        dataSheet.Cells(j + 2, schemaCol8) = dataSheet.Cells(j + 2, schemaCol8)
+        
+        dataSheet.Cells(j + 2, schemaCol4 + 1) = dataSheet.Cells(j + 2, schemaCol4 + 1)
+        dataSheet.Cells(j + 2, schemaCol5 + 1) = dataSheet.Cells(j + 2, schemaCol5 + 1)
+        dataSheet.Cells(j + 2, schemaCol7 + 1) = dataSheet.Cells(j + 2, schemaCol7 + 1)
+        dataSheet.Cells(j + 2, schemaCol8 + 1) = dataSheet.Cells(j + 2, schemaCol8 + 1)
+        
+        '计算模式四至模式八比较值
+        For k1 = 1 To 2
+            dataSheet.Cells(j + k1, schemaCol4 + 2) = MethodCompare(dataSheet.Cells(j + k1, schemaCol4 + 1), dataSheet.Cells(j + k1 - 1, schemaCol4 + 1))
+            dataSheet.Cells(j + k1, schemaCol5 + 2) = MethodCompare(dataSheet.Cells(j + k1, schemaCol5 + 1), dataSheet.Cells(j + k1 - 1, schemaCol5 + 1))
+            dataSheet.Cells(j + k1, schemaCol7 + 2) = MethodCompare(dataSheet.Cells(j + k1, schemaCol7 + 1), dataSheet.Cells(j + k1 - 1, schemaCol7 + 1))
+            dataSheet.Cells(j + k1, schemaCol8 + 2) = MethodCompare(dataSheet.Cells(j + k1, schemaCol8 + 1), dataSheet.Cells(j + k1 - 1, schemaCol8 + 1))
+        Next
+        
+        '计算模式七中的“四七比较”和模式八中的“五八比较” add by ljqu 2018.3.18
+        For k1 = 0 To 2
+            dataSheet.Cells(j + k1, schemaCol7 + 3) = MethodCompare(dataSheet.Cells(j + k1, schemaCol7 + 1), dataSheet.Cells(j + k1, schemaCol4 + 1))
+            dataSheet.Cells(j + k1, schemaCol8 + 3) = MethodCompare(dataSheet.Cells(j + k1, schemaCol8 + 1), dataSheet.Cells(j + k1, schemaCol5 + 1))
+        Next
         
         '更正赔2的初始值的“比较”栏目的值
         If dataSheet.Cells(j, lose2Col) <> "" And dataSheet.Cells(j, lose2Col + 1) <> "" And dataSheet.Cells(j, lose2Col + 2) <> "" Then
