@@ -64,9 +64,7 @@ re.Global = True
 re.IgnoreCase = True
 're.MultiLine = True
 
-dt = CStr(Date)
-dt = Replace(dt, "-", "")
-dt = Replace(dt, "/", "")
+dt = CStr(Year(Now())) & Right("0" & Month(Now()), 2) & Right("0" & Day(Now()), 2)
 hr = Left(CStr(Time), 2)
 
 
@@ -416,9 +414,8 @@ re.Global = True
 re.IgnoreCase = True
 're.MultiLine = True
 
-dt = CStr(Date)
-dt = Replace(dt, "-", "")
-dt = Replace(dt, "/", "")
+dt = CStr(Year(Now())) & Right("0" & Month(Now()), 2) & Right("0" & Day(Now()), 2)
+
 hr = Left(CStr(Time), 2)
 
 Set WebBrowser1 = UserForm1.WebBrowser1
