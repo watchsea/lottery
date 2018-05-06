@@ -240,3 +240,31 @@ End If
 
 End Sub
 
+
+'运行前引用Microsoft Visual Basic for Application Extensibility 5.3，并且选择信任对VBA工程访问
+Sub ExportAllVBC()
+    Dim ExportPath As String, ExtendName As String
+    Dim vbc As VBComponent
+    ExportPath = ThisWorkbook.path
+    For Each vbc In Application.VBE.ActiveVBProject.VBComponents
+        Select Case vbc.Type
+        Case vbext_ct_ClassModule, vbext_ct_Document '组件属性为类模块、EXCEL对象
+            ExtendName = ".cls" '设置导出文件的扩展名
+        Case vbext_ct_MSForm '组件属性为窗体
+            ExtendName = ".frm"
+        Case vbext_ct_StdModule '组件属性为模块时
+            ExtendName = ".bas"
+        End Select
+        If ExtendName <> "" Then vbc.Export ExportPath & "\code\" & vbc.Name & ExtendName
+    Next
+End Sub
+
+'导入所有的脚本
+Sub ImportAllVBC()
+    Dim theMod As VBIDE.VBComponent
+    For Each theMod In ThisWorkbook.VBProject.VBComponents
+        With theMod.CodeModule
+            .AddFromFile "the" & .Parent.Name & ".bas"
+        End With
+    Next
+End Sub
