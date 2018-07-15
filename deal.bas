@@ -647,6 +647,8 @@ Dim insertRecno As Long         '新记录插入的位置信息
 Dim tmClDict As Object    '联赛对应分类字典
 Dim clStrDict As Object   '排名对应积分字典
 
+Dim ll, panmBgCol
+
 
 Call 初始化字典(Dict, "Param")
 Call 初始化字典(leagueDict, "01赛事")
@@ -1104,11 +1106,39 @@ Do While j <= tloc
                     If dataColDict.exists("PANM") Then
                         dataBgCol = dataColDict.Item("PANM")
                         Call 记录盘口即时值(dataSheet, dataPK, Loc, dataBgCol, k, 30, 46, False, "False", 4)
+                        For ll = 1 To 3
+                            panmBgCol = dataColDict.Item("PANM_" & ll)
+                            dataSheet.Cells(Loc - 2, panmBgCol) = dataSheet.Cells(Loc - 3 + ll, dataBgCol)
+                            dataSheet.Cells(Loc - 2, panmBgCol + 1) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 1)
+                            dataSheet.Cells(Loc - 2, panmBgCol + 2) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 2)
+                            
+                            dataSheet.Cells(Loc - 1, panmBgCol) = dataSheet.Cells(Loc - 3 + ll, dataBgCol)
+                            dataSheet.Cells(Loc - 1, panmBgCol + 1) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 1)
+                            dataSheet.Cells(Loc - 1, panmBgCol + 2) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 2)
+                            
+                            dataSheet.Cells(Loc, panmBgCol) = dataSheet.Cells(Loc - 3 + ll, dataBgCol)
+                            dataSheet.Cells(Loc, panmBgCol + 1) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 1)
+                            dataSheet.Cells(Loc, panmBgCol + 2) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 2)
+                        Next
                     End If
                     'Bet365盘口数据
                     If dataColDict.exists("PANB") Then
                         dataBgCol = dataColDict.Item("PANB")
                         Call 记录盘口即时值(dataSheet, dataPK, Loc, dataBgCol, k, 10, 26, False, "False", 4)
+                        For ll = 1 To 3
+                            panmBgCol = dataColDict.Item("PANB_" & ll)
+                            dataSheet.Cells(Loc - 2, panmBgCol) = dataSheet.Cells(Loc - 3 + ll, dataBgCol)
+                            dataSheet.Cells(Loc - 2, panmBgCol + 1) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 1)
+                            dataSheet.Cells(Loc - 2, panmBgCol + 2) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 2)
+                            
+                            dataSheet.Cells(Loc - 1, panmBgCol) = dataSheet.Cells(Loc - 3 + ll, dataBgCol)
+                            dataSheet.Cells(Loc - 1, panmBgCol + 1) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 1)
+                            dataSheet.Cells(Loc - 1, panmBgCol + 2) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 2)
+                            
+                            dataSheet.Cells(Loc, panmBgCol) = dataSheet.Cells(Loc - 3 + ll, dataBgCol)
+                            dataSheet.Cells(Loc, panmBgCol + 1) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 1)
+                            dataSheet.Cells(Loc, panmBgCol + 2) = dataSheet.Cells(Loc - 3 + ll, dataBgCol + 2)
+                        Next
                     End If
                 End If
                 
@@ -1165,7 +1195,7 @@ Dim downColor
 
 
 Dim Loc As Long
-
+Dim usrCol As Integer       '用户临时数据列
 
 Dim dataWcol As Integer   '威廉希尔数据开始列号
 Dim dataBcol As Integer     'Bet365数据开始列号
@@ -1488,7 +1518,7 @@ For i = 0 To UBound(data)
             dataSheet.Cells(j + k1, schemaCol7 + 2) = MethodCompare(dataSheet.Cells(j + k1, schemaCol7 + 1), dataSheet.Cells(j + k1 - 1, schemaCol7 + 1))
             dataSheet.Cells(j + k1, schemaCol8 + 2) = MethodCompare(dataSheet.Cells(j + k1, schemaCol8 + 1), dataSheet.Cells(j + k1 - 1, schemaCol8 + 1))
         Next
-        
+
         '计算模式七中的“四七比较”和模式八中的“五八比较” add by ljqu 2018.3.18
         For k1 = 0 To 2
             dataSheet.Cells(j + k1, schemaCol7 + 3) = MethodCompare(dataSheet.Cells(j + k1, schemaCol7 + 1), dataSheet.Cells(j + k1, schemaCol4 + 1))
@@ -2869,6 +2899,7 @@ Dim anaabsoCol
 Dim anaratioCol
 Dim scoremCol
 Dim scoresCol
+Dim anaratio1Col
 Dim i
 Dim sum1 As Long
 
@@ -2878,6 +2909,8 @@ Dim b1
 
 anaabsoCol = dataColDict.Item("ANAABSO")
 anaratioCol = dataColDict.Item("ANARATIO")
+anaratio1Col = dataColDict.Item("ANARATIO_1")
+
 scoremCol = dataColDict.Item("SCOREM")
 scoresCol = dataColDict.Item("SCORES")
 
@@ -2935,7 +2968,17 @@ For i = 0 To 2
         dataSheet.Cells(Loc - i, anaratioCol + 2) = dataSheet.Cells(Loc - i, anaabsoCol + 2) / sum1
     End If
     dataSheet.Cells(Loc - i, anaratioCol + 3) = dataSheet.Cells(Loc - i, anaabsoCol) * 3 + dataSheet.Cells(Loc - i, anaabsoCol + 1) * 1
+    
+    
 Next
+
+For i = 0 To 2
+    'add by ljqu 2018.7.15
+    dataSheet.Cells(Loc - i, anaratio1Col) = dataSheet.Cells(Loc - 2, anaratioCol)
+    dataSheet.Cells(Loc - i, anaratio1Col + 1) = dataSheet.Cells(Loc - 2, anaratioCol + 1)
+    dataSheet.Cells(Loc - i, anaratio1Col + 2) = dataSheet.Cells(Loc - 2, anaratioCol + 2)
+Next
+
 End Sub
 
 
