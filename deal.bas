@@ -679,9 +679,11 @@ Set dataSheet = ActiveWorkbook.Sheets("综合数据")
 Call 初始化一般字典(dataColDict, dataSheet, 4, 0, 1, False)
 
 '判断最近升级是否完毕，2017.10.15增加
-usrCol = dataColDict.Item("MSTMCLS")
+usrCol = dataColDict.Item("PANM_1")
 If usrCol = 0 Then
-    MsgBox ("最近升级未完成！请先升级。")
+    'MsgBox ("程序升级中，请勿操作EXCEL......")
+    'Call 程序升级
+    MsgBox ("请先升级程序，再执行更新！")
     Exit Sub
 End If
 
@@ -2974,9 +2976,9 @@ Next
 
 For i = 0 To 2
     'add by ljqu 2018.7.15
-    dataSheet.Cells(Loc - i, anaratio1Col) = dataSheet.Cells(Loc - 2, anaratioCol)
-    dataSheet.Cells(Loc - i, anaratio1Col + 1) = dataSheet.Cells(Loc - 2, anaratioCol + 1)
-    dataSheet.Cells(Loc - i, anaratio1Col + 2) = dataSheet.Cells(Loc - 2, anaratioCol + 2)
+    dataSheet.Cells(Loc - i, anaratio1Col) = dataSheet.Cells(Loc - 2, anaratioCol + 3)
+    dataSheet.Cells(Loc - i, anaratio1Col + 1) = dataSheet.Cells(Loc - 1, anaratioCol + 3)
+    dataSheet.Cells(Loc - i, anaratio1Col + 2) = dataSheet.Cells(Loc, anaratioCol + 3)
 Next
 
 End Sub

@@ -19,9 +19,9 @@ Sub 程序升级()
         sheet1.Cells.Columns(i2).Insert
         sheet1.Cells.Columns(i2).Insert
         sheet1.Cells.Columns(i2).Insert
-        sheet1.Cells(3, i2) = "胜"
-        sheet1.Cells(3, i2 + 1) = "平"
-        sheet1.Cells(3, i2 + 2) = "负"
+        sheet1.Cells(3, i2) = "初始"
+        sheet1.Cells(3, i2 + 1) = "即时一"
+        sheet1.Cells(3, i2 + 2) = "即时二"
         sheet1.Range(Cells(2, i2), Cells(2, i2 + 2)).Merge
         sheet1.Cells(2, i2) = "主队+客队盘形分析(相对数据)-总排名"
         sheet1.Cells(4, i2) = "ANARATIO_1"
