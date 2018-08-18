@@ -397,3 +397,38 @@ Dim i
 End Function
 
 
+
+Sub 通用列转行(dataSheet1 As Worksheet, j, colDict, srcLbl As String, srcOffset As Integer, cols As Integer, rowOffset As Integer, tgtLbl As String, tgtOffset As Integer)
+'通用的列转行，通过源列的标识，定位数据，再转换为行
+'dataSheet1：对应的数据页
+'j:     当前的数据行， 此处只针对初始值。
+'colDict:   标识与列号对应的数据字典
+'srcLbl:待转列的大区标识
+'srcOffset: 待转列相对大区标识的偏移量(从1开始计算）
+'cols: 要转换的数据列数
+'rowOffset: 源数据要转换的数据所在行偏移量（从1开始计算）
+'tgtLbl: 目标数据所在的大区标识
+'tgtOffset:目标数据存放的位置相对目标区标识的偏移量（从1开始计算）
+Dim i
+
+Dim srcCol As Integer    '源大区标识所在的列
+Dim tgtCol As Integer   '目标大区标识所在的列
+
+Dim srcDataCol As Integer   '源数据所在的列 = 源大区标识所在的列+偏移量-1
+Dim tgtDataCol As Integer   '目标数据所在的列 = 目标大区所在的列+偏移量-1
+
+srcCol = colDict.Item(srcLbl)
+tgtCol = colDict.Item(tgtLbl)
+
+srcDataCol = srcCol + srcOffset - 1
+tgtDataCol = tgtCol + tgtOffset - 1
+
+For i = 1 To cols
+    dataSheet1.Cells(j, tgtDataCol + i - 1) = dataSheet1.Cells(j + rowOffset - 1, srcDataCol + i - 1)
+    dataSheet1.Cells(j + 1, tgtDataCol + i - 1) = dataSheet1.Cells(j + rowOffset - 1, srcDataCol + i - 1)
+    dataSheet1.Cells(j + 2, tgtDataCol + i - 1) = dataSheet1.Cells(j + rowOffset - 1, srcDataCol + i - 1)
+Next
+
+End Sub
+
+

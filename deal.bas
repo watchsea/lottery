@@ -679,7 +679,7 @@ Set dataSheet = ActiveWorkbook.Sheets("综合数据")
 Call 初始化一般字典(dataColDict, dataSheet, 4, 0, 1, False)
 
 '判断最近升级是否完毕，2017.10.15增加
-usrCol = dataColDict.Item("PANM_1")
+usrCol = dataColDict.Item("SCHEMA6_1")
 If usrCol = 0 Then
     'MsgBox ("程序升级中，请勿操作EXCEL......")
     'Call 程序升级
@@ -1211,6 +1211,7 @@ Dim BF2col As Integer        'BF2数据开始列号
 Dim BF3col As Integer        'BF3数据开始列号
 Dim varCol As Integer        '方差数据开始列号
 Dim panmCol As Integer      '澳门盘口开始列号
+Dim panbCol As Integer      'Bet365盘口开始列号
 
 Dim recCnt  As Long     '待取的数据个数
 
@@ -1220,12 +1221,23 @@ Dim offset3 As Integer         '至第3个数据的偏移量
 Dim offset4 As Integer         '至第4个数据的偏移量
 
 
-Dim schemaCol As Integer
+Dim schemaCol1 As Integer
+Dim schemaCol2 As Integer
+Dim schemaCol3 As Integer
+
 Dim schemaCol4 As Integer
 Dim schemaCol5 As Integer
 Dim schemaCol6 As Integer
 Dim schemaCol7 As Integer
 Dim schemaCol8 As Integer
+
+Dim schemaCol11 As Integer
+Dim schemaCol21 As Integer
+Dim schemaCol41 As Integer
+
+Dim schemaCol61 As Integer
+Dim schemaCol71 As Integer
+Dim schemaCol81 As Integer
 
 
 Dim dataCol(5)
@@ -1258,15 +1270,6 @@ ReDim data(cnt - 4, 23) '对应worksheet中的行号，日期，联赛，对阵�
 Call 初始化一般字典(dataColDict, dataSheet, 4, 0, 1, False)
 
 
-'判断最近升级是否完毕
-usrCol = dataColDict.Item("SCHEMA4")
-If usrCol = 0 Then
-    MsgBox ("2018.3.20升级未完成！现在将进行升级....")
-    Call 程序升级
-    '升级完后要重载一次字典
-    Call 初始化一般字典(dataColDict, dataSheet, 4, 0, 1, False)
-End If
-
 
 dataCol(0) = dataColDict.Item("DATAW")
 dataCol(1) = dataColDict.Item("DATAB")
@@ -1280,9 +1283,11 @@ BF2col = dataColDict.Item("BF2")
 BF3col = dataColDict.Item("BF3")
 varCol = dataColDict.Item("VAR")
 panmCol = dataColDict.Item("PANM")
+panbCol = dataColDict.Item("PANB")
 
-
-schemaCol = dataColDict.Item("SCHEMA")
+schemaCol1 = dataColDict.Item("SCHEMA1")
+schemaCol2 = dataColDict.Item("SCHEMA2")
+schemaCol3 = dataColDict.Item("SCHEMA3")
 schemaCol4 = dataColDict.Item("SCHEMA4")   '模式四的起始列
 schemaCol5 = dataColDict.Item("SCHEMA5")   '模式五的起始列
 schemaCol6 = dataColDict.Item("SCHEMA6")   '模式六的起始列
@@ -1290,12 +1295,20 @@ schemaCol7 = dataColDict.Item("SCHEMA7")   '模式七的起始列
 schemaCol8 = dataColDict.Item("SCHEMA8")   '模式八的起始列
 
 
+schemaCol11 = dataColDict.Item("SCHEMA1_1")
+schemaCol21 = dataColDict.Item("SCHEMA2_1")
+schemaCol41 = dataColDict.Item("SCHEMA4_1")
+
+schemaCol61 = dataColDict.Item("SCHEMA6_1")
+schemaCol71 = dataColDict.Item("SCHEMA7_1")
+schemaCol81 = dataColDict.Item("SCHEMA8_1")
+
 
 '判断最近升级是否完毕
-usrCol = dataColDict.Item("SCHEMA4")
+usrCol = dataColDict.Item("SCHEMA1_1")
 If usrCol = 0 Then
-    MsgBox ("2018.3.20升级未完成！现在将进行升级....")
-    Call 程序升级
+    MsgBox ("2018.8.18升级未完成！请先执行程序升级....")
+    Exit Sub
 End If
 
 
@@ -1426,9 +1439,9 @@ For i = 0 To UBound(data)
     j = data(i, 0)     '取数据对应的worksheet中的行号
     '处理模式计算部分和bf1、bf2、bf3以及方差的特殊处理
     If data(i, 4) = "初始值" Then
-        dataSheet.Cells(j, schemaCol) = data(i, 20)
-        dataSheet.Cells(j, schemaCol + 1) = data(i, 21)
-        dataSheet.Cells(j, schemaCol + 2) = data(i, 22)
+        dataSheet.Cells(j, schemaCol1) = data(i, 20)        '模式一
+        dataSheet.Cells(j, schemaCol2) = data(i, 21)    '模式二
+        dataSheet.Cells(j, schemaCol3) = data(i, 22)    '模式三
         dataSheet.Cells(j, schemaCol4).FormulaR1C1 = formulaStr    'data(i, 23)
         dataSheet.Cells(j, schemaCol4 + 1).FormulaR1C1 = param4  'data(i, 23)
         
@@ -1438,6 +1451,8 @@ For i = 0 To UBound(data)
         If Not (dataSheet.Cells(j, panmCol + 1) = "" And dataSheet.Cells(j + 1, panmCol + 1) = "" And dataSheet.Cells(j + 2, panmCol + 1) = "") Then
             dataSheet.Cells(j, schemaCol6) = dataSheet.Cells(j, panmCol + 1).Text + ":" + dataSheet.Cells(j + 1, panmCol + 1).Text + ":" + dataSheet.Cells(j + 2, panmCol + 1).Text
         End If
+        
+                
         dataSheet.Cells(j, schemaCol7).FormulaR1C1 = formulaStr7    'data(i, 23)
         dataSheet.Cells(j, schemaCol7 + 1).FormulaR1C1 = param7  'data(i, 23)
         
@@ -1445,9 +1460,9 @@ For i = 0 To UBound(data)
         dataSheet.Cells(j, schemaCol8 + 1).FormulaR1C1 = param8  'data(i, 23)
         
         '同时复制到即时值1和即时值2,2017.10.15改为直接计算值
-        dataSheet.Cells(j + 1, schemaCol) = data(i + 1, 20)
-        dataSheet.Cells(j + 1, schemaCol + 1) = data(i + 1, 21)
-        dataSheet.Cells(j + 1, schemaCol + 2) = data(i + 1, 22)
+        dataSheet.Cells(j + 1, schemaCol1) = data(i + 1, 20)
+        dataSheet.Cells(j + 1, schemaCol2) = data(i + 1, 21)
+        dataSheet.Cells(j + 1, schemaCol3) = data(i + 1, 22)
         dataSheet.Cells(j + 1, schemaCol4).FormulaR1C1 = formulaStr ' = dataSheet.Cells(j, schemaCol + 3)
         dataSheet.Cells(j + 1, schemaCol4 + 1).FormulaR1C1 = param4 'data(i, 23)
         
@@ -1461,9 +1476,9 @@ For i = 0 To UBound(data)
         dataSheet.Cells(j + 1, schemaCol8).FormulaR1C1 = formulaStr8    'data(i, 23)
         dataSheet.Cells(j + 1, schemaCol8 + 1).FormulaR1C1 = param8 'data(i, 23)
         
-        dataSheet.Cells(j + 2, schemaCol) = data(i + 2, 20)
-        dataSheet.Cells(j + 2, schemaCol + 1) = data(i + 2, 21)
-        dataSheet.Cells(j + 2, schemaCol + 2) = data(i + 2, 22)
+        dataSheet.Cells(j + 2, schemaCol1) = data(i + 2, 20)
+        dataSheet.Cells(j + 2, schemaCol2) = data(i + 2, 21)
+        dataSheet.Cells(j + 2, schemaCol3) = data(i + 2, 22)
         dataSheet.Cells(j + 2, schemaCol4).FormulaR1C1 = formulaStr   ' = dataSheet.Cells(j, schemaCol + 3)
         dataSheet.Cells(j + 2, schemaCol4 + 1).FormulaR1C1 = param4 'data(i, 23)
         
@@ -1513,6 +1528,36 @@ For i = 0 To UBound(data)
         dataSheet.Cells(j + 2, schemaCol7 + 1) = dataSheet.Cells(j + 2, schemaCol7 + 1)
         dataSheet.Cells(j + 2, schemaCol8 + 1) = dataSheet.Cells(j + 2, schemaCol8 + 1)
         
+        
+        
+        'add by ljqu 2018.8.13 将模式7的数据并排为模式7并排
+        dataSheet.Cells(j, schemaCol71) = dataSheet.Cells(j, schemaCol7)
+        dataSheet.Cells(j + 1, schemaCol71) = dataSheet.Cells(j, schemaCol7)
+        dataSheet.Cells(j + 2, schemaCol71) = dataSheet.Cells(j, schemaCol7)
+        
+        dataSheet.Cells(j, schemaCol71 + 1) = dataSheet.Cells(j + 1, schemaCol7)
+        dataSheet.Cells(j + 1, schemaCol71 + 1) = dataSheet.Cells(j + 1, schemaCol7)
+        dataSheet.Cells(j + 2, schemaCol71 + 1) = dataSheet.Cells(j + 1, schemaCol7)
+
+        dataSheet.Cells(j, schemaCol71 + 2) = dataSheet.Cells(j + 2, schemaCol7)
+        dataSheet.Cells(j + 1, schemaCol71 + 2) = dataSheet.Cells(j + 2, schemaCol7)
+        dataSheet.Cells(j + 2, schemaCol71 + 2) = dataSheet.Cells(j + 2, schemaCol7)
+
+        'add by ljqu 2018.8.13 将模式8的数据并排为模式8并排
+        dataSheet.Cells(j, schemaCol81) = dataSheet.Cells(j, schemaCol8)
+        dataSheet.Cells(j + 1, schemaCol81) = dataSheet.Cells(j, schemaCol8)
+        dataSheet.Cells(j + 2, schemaCol81) = dataSheet.Cells(j, schemaCol8)
+        
+        dataSheet.Cells(j, schemaCol81 + 1) = dataSheet.Cells(j + 1, schemaCol8)
+        dataSheet.Cells(j + 1, schemaCol81 + 1) = dataSheet.Cells(j + 1, schemaCol8)
+        dataSheet.Cells(j + 2, schemaCol81 + 1) = dataSheet.Cells(j + 1, schemaCol8)
+
+        dataSheet.Cells(j, schemaCol81 + 2) = dataSheet.Cells(j + 2, schemaCol8)
+        dataSheet.Cells(j + 1, schemaCol81 + 2) = dataSheet.Cells(j + 2, schemaCol8)
+        dataSheet.Cells(j + 2, schemaCol81 + 2) = dataSheet.Cells(j + 2, schemaCol8)
+
+        
+        
         '计算模式四至模式八比较值
         For k1 = 1 To 2
             dataSheet.Cells(j + k1, schemaCol4 + 2) = MethodCompare(dataSheet.Cells(j + k1, schemaCol4 + 1), dataSheet.Cells(j + k1 - 1, schemaCol4 + 1))
@@ -1550,6 +1595,78 @@ For i = 0 To UBound(data)
         If dataSheet.Cells(j + 2, varCol) <> "" And dataSheet.Cells(j + 2, varCol + 1) <> "" And dataSheet.Cells(j + 2, varCol + 2) <> "" Then
             dataSheet.Cells(j + 2, varCol + 3) = 标识(dataSheet.Cells(j + 2, varCol), dataSheet.Cells(j + 2, varCol + 1), dataSheet.Cells(j + 2, varCol + 2)) + 固定值比较(dataSheet.Cells(j + 2, varCol), dataSheet.Cells(j + 2, varCol + 1), dataSheet.Cells(j + 2, varCol + 2), 1, "D")
         End If
+        
+        
+        
+        
+        '-----------------------------------------
+        'add by ljqu 2018.8.13
+        '-----------------------------------------
+        If Not (dataSheet.Cells(j, panbCol + 1) = "" And dataSheet.Cells(j + 1, panbCol + 1) = "" And dataSheet.Cells(j + 2, panbCol + 1) = "") Then
+            dataSheet.Cells(j, schemaCol61) = dataSheet.Cells(j, panbCol + 1).Text + ":" + dataSheet.Cells(j + 1, panbCol + 1).Text + ":" + dataSheet.Cells(j + 2, panbCol + 1).Text
+        End If
+        dataSheet.Cells(j + 1, schemaCol61) = dataSheet.Cells(j, schemaCol61)
+        dataSheet.Cells(j + 2, schemaCol61) = dataSheet.Cells(j, schemaCol61)
+        
+        
+        'Ok30列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "OK30", 4, 1, 1, "OK30_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "OK30", 4, 1, 2, "OK30_1", 2)
+        Call 通用列转行(dataSheet, j, dataColDict, "OK30", 4, 1, 3, "OK30_1", 3)
+        Call 通用列转行(dataSheet, j, dataColDict, "OK30", 5, 1, 2, "OK30_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "OK30", 5, 1, 3, "OK30_2", 2)
+        
+        
+        'Bf1列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "BF1", 5, 1, 1, "BF1_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "BF1", 5, 1, 2, "BF1_1", 2)
+        Call 通用列转行(dataSheet, j, dataColDict, "BF1", 5, 1, 3, "BF1_1", 3)
+        
+        Call 通用列转行(dataSheet, j, dataColDict, "BF1", 6, 1, 1, "BF1_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "BF1", 6, 1, 2, "BF1_2", 2)
+        Call 通用列转行(dataSheet, j, dataColDict, "BF1", 6, 1, 3, "BF1_2", 3)
+
+        
+        '威廉数据列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 3, 1, "DATAW_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 3, 2, "DATAW_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 3, 3, "DATAW_3", 1)
+        
+        
+        '-----------------------------------------
+        'add end  2018.8.13
+        '-----------------------------------------
+
+        '-----------------------------------------
+        'add by ljqu 2018.8.18
+        '-----------------------------------------
+        
+        
+        '模式一列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA1", 1, 1, 1, "SCHEMA1_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA1", 1, 1, 2, "SCHEMA1_1", 2)
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA1", 1, 1, 3, "SCHEMA1_1", 3)
+        
+        
+        '模式二列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA2", 1, 1, 1, "SCHEMA2_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA2", 1, 1, 2, "SCHEMA2_1", 2)
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA2", 1, 1, 3, "SCHEMA2_1", 3)
+        
+        
+        '模式四列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA4", 1, 1, 1, "SCHEMA4_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA4", 1, 1, 2, "SCHEMA4_1", 2)
+        Call 通用列转行(dataSheet, j, dataColDict, "SCHEMA4", 1, 1, 3, "SCHEMA4_1", 3)
+        
+        
+        '-----------------------------------------
+        'add end  2018.8.18
+        '-----------------------------------------
+
+        
+        
+        
     End If
 Next
 
