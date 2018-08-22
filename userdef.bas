@@ -431,4 +431,38 @@ Next
 
 End Sub
 
+Function calDispersion(p1, p2, p3, p4)
+'计算前面三个数的平均值与第四个数的差值
+'p1,p2,p3:待求平均数的值
+'p4:第四差值
+Dim v1 As Double
+Dim v2 As Double
+Dim v3 As Double
+Dim v4 As Double
+
+If IsNumeric(p1) Then
+    v1 = p1
+Else
+    v1 = 0
+End If
+If IsNumeric(p2) Then
+    v2 = p2
+Else
+    v2 = 0
+End If
+If IsNumeric(p3) Then
+    v3 = p3
+Else
+    v3 = 0
+End If
+If IsNumeric(p4) Then
+    v4 = p4
+Else
+    v4 = 0
+End If
+
+calDispersion = (v1 + v2 + v3) / 3 - v4
+
+End Function
+
 
