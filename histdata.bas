@@ -381,46 +381,50 @@ Dim Loc As Integer
               Set node = divObj.ChildNodes
               Set BasicInfo = node(0).ChildNodes
               Set Klinfo = node(1).Rows
-              BFarr(Loc, 0) = pDt   'lotteryNo                 '期数
-              BFarr(Loc, 1) = BasicInfo(0).innerText                   '标识
-              BFarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
-              BFarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
-              tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-              BFarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)    '日期
-              BFarr(Loc, 5) = tt(1)     '时间
-              For j = 0 To BasicInfo(1).ChildNodes.Length - 1
-                  If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
-                        BFarr(Loc, 6) = BasicInfo(1).ChildNodes(j).innerText     '主队
-                  ElseIf "STRONG" = BasicInfo(1).ChildNodes(j).nodename Then
-                        BFarr(Loc, 7) = BasicInfo(1).ChildNodes(j).innerText     '比分
-                  ElseIf "B" = BasicInfo(1).ChildNodes(j).nodename Then
-                        BFarr(Loc, 8) = BasicInfo(1).ChildNodes(j).innerText     '客队
-                  End If
-              Next j
-              For j = 0 To Klinfo.Length - 1
-                   If InStr(Klinfo(j).innerText, "主胜") > 0 Then
-                        For k = 0 To 12
-                        BFarr(Loc, 9 + k * 3) = Klinfo(j).Cells(k + 1).innerText
-                        'BFarr(loc, 9) = Klinfo(j).Cells(8).innerText                       '必发
-                        'BFarr(loc, 12) = Klinfo(j).Cells(10).innerText
-                        Next k '99平均
-                   End If
-                   If InStr(Klinfo(j).innerText, "平局") > 0 Then
-                     For k = 0 To 12
-                        BFarr(Loc, 9 + k * 3 + 1) = Klinfo(j).Cells(k + 1).innerText
-                        'BFarr(loc, 9) = Klinfo(j).Cells(8).innerText                       '必发
-                        'BFarr(loc, 12) = Klinfo(j).Cells(10).innerText
-                        Next k '99平均
-                   End If
-                   If InStr(Klinfo(j).innerText, "客胜") > 0 Then
-                        For k = 0 To 12
-                        BFarr(Loc, 9 + k * 3 + 2) = Klinfo(j).Cells(k + 1).innerText
-                        'BFarr(loc, 9) = Klinfo(j).Cells(8).innerText                       '必发
-                        'BFarr(loc, 12) = Klinfo(j).Cells(10).innerText
-                        Next k '99平均
-                   End If
-              Next
-              Loc = Loc + 1
+              
+              If Loc <= UBound(BFarr) Then    '2018.10.18 add ,由于在第一次取记录后，数据会随时增长，导致读到最后一页时的数据已经发生变更，
+                              '因而将所取数据限定在第一次刷新网页时的记录数。
+                BFarr(Loc, 0) = pDt   'lotteryNo                 '期数
+                BFarr(Loc, 1) = BasicInfo(0).innerText                   '标识
+                BFarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
+                BFarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
+                tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
+                BFarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)    '日期
+                BFarr(Loc, 5) = tt(1)     '时间
+                For j = 0 To BasicInfo(1).ChildNodes.Length - 1
+                    If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
+                          BFarr(Loc, 6) = BasicInfo(1).ChildNodes(j).innerText     '主队
+                    ElseIf "STRONG" = BasicInfo(1).ChildNodes(j).nodename Then
+                          BFarr(Loc, 7) = BasicInfo(1).ChildNodes(j).innerText     '比分
+                    ElseIf "B" = BasicInfo(1).ChildNodes(j).nodename Then
+                          BFarr(Loc, 8) = BasicInfo(1).ChildNodes(j).innerText     '客队
+                    End If
+                Next j
+                For j = 0 To Klinfo.Length - 1
+                     If InStr(Klinfo(j).innerText, "主胜") > 0 Then
+                          For k = 0 To 12
+                          BFarr(Loc, 9 + k * 3) = Klinfo(j).Cells(k + 1).innerText
+                          'BFarr(loc, 9) = Klinfo(j).Cells(8).innerText                       '必发
+                          'BFarr(loc, 12) = Klinfo(j).Cells(10).innerText
+                          Next k '99平均
+                     End If
+                     If InStr(Klinfo(j).innerText, "平局") > 0 Then
+                       For k = 0 To 12
+                          BFarr(Loc, 9 + k * 3 + 1) = Klinfo(j).Cells(k + 1).innerText
+                          'BFarr(loc, 9) = Klinfo(j).Cells(8).innerText                       '必发
+                          'BFarr(loc, 12) = Klinfo(j).Cells(10).innerText
+                          Next k '99平均
+                     End If
+                     If InStr(Klinfo(j).innerText, "客胜") > 0 Then
+                          For k = 0 To 12
+                          BFarr(Loc, 9 + k * 3 + 2) = Klinfo(j).Cells(k + 1).innerText
+                          'BFarr(loc, 9) = Klinfo(j).Cells(8).innerText                       '必发
+                          'BFarr(loc, 12) = Klinfo(j).Cells(10).innerText
+                          Next k '99平均
+                     End If
+                Next
+                Loc = Loc + 1
+             End If
         End If
     Next
 
@@ -707,50 +711,54 @@ Dim Loc As Integer
               Set node = divObj.ChildNodes
               Set BasicInfo = node(0).ChildNodes
               Set Klinfo = node(1).Rows
-              KLarr(Loc, 0) = pDt                 '期数
-              KLarr(Loc, 1) = BasicInfo(0).innerText                   '标识
-              KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
-              KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
-              tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-              KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
-              KLarr(Loc, 5) = tt(1)     '时间
-              For j = 0 To BasicInfo(1).ChildNodes.Length - 1
-                  If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
-                        KLarr(Loc, 6) = BasicInfo(1).ChildNodes(j).innerText     '主队
-                  ElseIf "STRONG" = BasicInfo(1).ChildNodes(j).nodename Then
-                        KLarr(Loc, 7) = BasicInfo(1).ChildNodes(j).innerText     '比分
-                  ElseIf "B" = BasicInfo(1).ChildNodes(j).nodename Then
-                        KLarr(Loc, 8) = BasicInfo(1).ChildNodes(j).innerText     '客队
-                  End If
-              Next j
-              For j = 0 To Klinfo.Length - 1
-                   If InStr(Klinfo(j).innerText, "威廉") > 0 Then
-                        KLarr(Loc, 9) = Klinfo(j).Cells(9).innerText                       '主胜
-                        KLarr(Loc, 10) = Klinfo(j).Cells(10).innerText                     '平局
-                        KLarr(Loc, 11) = Klinfo(j).Cells(11).innerText                     '客胜
-                        KLarr(Loc, 12) = Klinfo(j).Cells(8).innerText                     '赔付率
-                        
-                   End If
-                   If InStr(Klinfo(j).innerText, "Bet365") > 0 Then
-                        KLarr(Loc, 13) = Klinfo(j).Cells(9).innerText                       '主胜
-                        KLarr(Loc, 14) = Klinfo(j).Cells(10).innerText                     '平局
-                        KLarr(Loc, 15) = Klinfo(j).Cells(11).innerText                     '客胜
-                        KLarr(Loc, 16) = Klinfo(j).Cells(8).innerText                     '赔付率
-                   End If
-                   If InStr(Klinfo(j).innerText, "澳门") > 0 Then
-                        KLarr(Loc, 17) = Klinfo(j).Cells(9).innerText                       '主胜
-                        KLarr(Loc, 18) = Klinfo(j).Cells(10).innerText                     '平局
-                        KLarr(Loc, 19) = Klinfo(j).Cells(11).innerText                     '客胜
-                        KLarr(Loc, 20) = Klinfo(j).Cells(8).innerText                     '赔付率
-                   End If
-                   If InStr(Klinfo(j).innerText, "所选公司凯利方差") > 0 Then
-                        KLarr(Loc, 21) = Klinfo(j).Cells(1).innerText                       '主胜
-                        KLarr(Loc, 22) = Klinfo(j).Cells(2).innerText                     '平局
-                        KLarr(Loc, 23) = Klinfo(j).Cells(3).innerText                     '客胜
-
-                   End If
-              Next
-              Loc = Loc + 1
+              
+              If Loc <= UBound(KLarr) Then    '2018.10.18 add ,由于在第一次取记录后，数据会随时增长，导致读到最后一页时的数据已经发生变更，
+                                              '因而将所取数据限定在第一次刷新网页时的记录数。
+                  KLarr(Loc, 0) = pDt                 '期数
+                  KLarr(Loc, 1) = BasicInfo(0).innerText                   '标识
+                  KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
+                  KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
+                  tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
+                  KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                  KLarr(Loc, 5) = tt(1)     '时间
+                  For j = 0 To BasicInfo(1).ChildNodes.Length - 1
+                      If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
+                            KLarr(Loc, 6) = BasicInfo(1).ChildNodes(j).innerText     '主队
+                      ElseIf "STRONG" = BasicInfo(1).ChildNodes(j).nodename Then
+                            KLarr(Loc, 7) = BasicInfo(1).ChildNodes(j).innerText     '比分
+                      ElseIf "B" = BasicInfo(1).ChildNodes(j).nodename Then
+                            KLarr(Loc, 8) = BasicInfo(1).ChildNodes(j).innerText     '客队
+                      End If
+                  Next j
+                  For j = 0 To Klinfo.Length - 1
+                       If InStr(Klinfo(j).innerText, "威廉") > 0 Then
+                            KLarr(Loc, 9) = Klinfo(j).Cells(9).innerText                       '主胜
+                            KLarr(Loc, 10) = Klinfo(j).Cells(10).innerText                     '平局
+                            KLarr(Loc, 11) = Klinfo(j).Cells(11).innerText                     '客胜
+                            KLarr(Loc, 12) = Klinfo(j).Cells(8).innerText                     '赔付率
+                            
+                       End If
+                       If InStr(Klinfo(j).innerText, "Bet365") > 0 Then
+                            KLarr(Loc, 13) = Klinfo(j).Cells(9).innerText                       '主胜
+                            KLarr(Loc, 14) = Klinfo(j).Cells(10).innerText                     '平局
+                            KLarr(Loc, 15) = Klinfo(j).Cells(11).innerText                     '客胜
+                            KLarr(Loc, 16) = Klinfo(j).Cells(8).innerText                     '赔付率
+                       End If
+                       If InStr(Klinfo(j).innerText, "澳门") > 0 Then
+                            KLarr(Loc, 17) = Klinfo(j).Cells(9).innerText                       '主胜
+                            KLarr(Loc, 18) = Klinfo(j).Cells(10).innerText                     '平局
+                            KLarr(Loc, 19) = Klinfo(j).Cells(11).innerText                     '客胜
+                            KLarr(Loc, 20) = Klinfo(j).Cells(8).innerText                     '赔付率
+                       End If
+                       If InStr(Klinfo(j).innerText, "所选公司凯利方差") > 0 Then
+                            KLarr(Loc, 21) = Klinfo(j).Cells(1).innerText                       '主胜
+                            KLarr(Loc, 22) = Klinfo(j).Cells(2).innerText                     '平局
+                            KLarr(Loc, 23) = Klinfo(j).Cells(3).innerText                     '客胜
+    
+                       End If
+                  Next
+                  Loc = Loc + 1
+                End If
         End If
     Next
 
@@ -958,35 +966,39 @@ Dim Loc As Integer
               Set node = divObj.ChildNodes
               Set BasicInfo = node(0).ChildNodes
               Set Klinfo = node(1).Rows
-              KLarr(Loc, 0) = pDt                 '期数
-              KLarr(Loc, 1) = BasicInfo(0).innerText                   '标识
-              KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
-              KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
-              tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-              KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
-              KLarr(Loc, 5) = tt(1)     '时间
-              For j = 0 To BasicInfo(1).ChildNodes.Length - 1
-                  If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
-                        KLarr(Loc, 6) = BasicInfo(1).ChildNodes(j).innerText     '主队
-                  ElseIf "STRONG" = BasicInfo(1).ChildNodes(j).nodename Then
-                        KLarr(Loc, 7) = BasicInfo(1).ChildNodes(j).innerText     '比分
-                  ElseIf "B" = BasicInfo(1).ChildNodes(j).nodename Then
-                        KLarr(Loc, 8) = BasicInfo(1).ChildNodes(j).innerText     '客队
-                  End If
-              Next j
-              For j = 0 To Klinfo.Length - 1
-                   If InStr(Klinfo(j).innerText, "Bet365") > 0 Then
-                        For k = 1 To Klinfo(j).Cells.Length - 1
-                            KLarr(Loc, 8 + k) = Klinfo(j).Cells(k).innerText
-                        Next
-                   End If
-                   If InStr(Klinfo(j).innerText, "澳门") > 0 Then
-                        For k = 1 To Klinfo(j).Cells.Length - 1
-                            KLarr(Loc, 28 + k) = Klinfo(j).Cells(k).innerText
-                        Next
-                   End If
-              Next
-              Loc = Loc + 1
+              
+              If Loc <= UBound(KLarr) Then    '2018.10.18 add ,由于在第一次取记录后，数据会随时增长，导致读到最后一页时的数据已经发生变更，
+                                              '因而将所取数据限定在第一次刷新网页时的记录数。
+                KLarr(Loc, 0) = pDt                 '期数
+                KLarr(Loc, 1) = BasicInfo(0).innerText                   '标识
+                KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
+                KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
+                tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
+                KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                KLarr(Loc, 5) = tt(1)     '时间
+                For j = 0 To BasicInfo(1).ChildNodes.Length - 1
+                    If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
+                          KLarr(Loc, 6) = BasicInfo(1).ChildNodes(j).innerText     '主队
+                    ElseIf "STRONG" = BasicInfo(1).ChildNodes(j).nodename Then
+                          KLarr(Loc, 7) = BasicInfo(1).ChildNodes(j).innerText     '比分
+                    ElseIf "B" = BasicInfo(1).ChildNodes(j).nodename Then
+                          KLarr(Loc, 8) = BasicInfo(1).ChildNodes(j).innerText     '客队
+                    End If
+                Next j
+                For j = 0 To Klinfo.Length - 1
+                     If InStr(Klinfo(j).innerText, "Bet365") > 0 Then
+                          For k = 1 To Klinfo(j).Cells.Length - 1
+                              KLarr(Loc, 8 + k) = Klinfo(j).Cells(k).innerText
+                          Next
+                     End If
+                     If InStr(Klinfo(j).innerText, "澳门") > 0 Then
+                          For k = 1 To Klinfo(j).Cells.Length - 1
+                              KLarr(Loc, 28 + k) = Klinfo(j).Cells(k).innerText
+                          Next
+                     End If
+                Next
+                Loc = Loc + 1
+            End If
         End If
     Next
 
@@ -1000,4 +1012,5 @@ Set Klinfo = Nothing
 规范澳客网盘口评测 = Loc
 
 End Function
+
 
