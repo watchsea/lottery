@@ -277,11 +277,11 @@ totcnt = 1
 
 Set WebBrowser1 = UserForm1.WebBrowser1
 dt = begindate
-Do While dt <= enddate
-
+'Do While dt <= dt    '无法处理历史数据，所以只一次循环即可，将enddate改为begindate
     sdt = CStr(dt)
     sdt = Replace(sdt, "/", "-")
-    WebBrowser1.Navigate "http://www.okooo.com/jingcai/shuju/betfa/" + sdt
+    'WebBrowser1.Navigate "http://www.okooo.com/jingcai/shuju/betfa/" + sdt   'delete 2018.10.17
+    WebBrowser1.Navigate "http://www.okooo.com/danchang/shuju/betfa/"
 '    WebBrowser1.Refresh
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
@@ -345,7 +345,7 @@ Do While dt <= enddate
     
     dt = DateAdd("d", 1, dt)   '增加一天
     Sleep 500
-Loop
+'Loop
 
 wkSheet.Cells(1, 1) = totcnt
 
@@ -488,10 +488,10 @@ wkSheet.Columns("H:H").NumberFormatLocal = "@"
 Loc = 2
 Set WebBrowser1 = UserForm1.WebBrowser1
 dt = begindate
-Do While dt <= enddate
+'Do While dt <= enddate
     sdt = CStr(dt)
     sdt = Replace(sdt, "/", "-")
-    WebBrowser1.Navigate "http://www.okooo.com/jingcai/shuju/zhishu/" + sdt
+    WebBrowser1.Navigate "http://www.okooo.com/danchang/shuju/zhishu/"     '+ sdt
 '    WebBrowser1.Refresh
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
@@ -538,7 +538,7 @@ Do While dt <= enddate
     
     dt = DateAdd("d", 1, dt)   '增加一天
     Sleep 500
-Loop
+'Loop
    wkSheet.Cells(1, 1) = Loc - 1
    WebBrowser1.Navigate "about:blank"
    Set wkSheet = Nothing
@@ -606,10 +606,10 @@ totcnt = 1
 
 Set WebBrowser1 = UserForm1.WebBrowser1
 dt = begindate
-Do While dt <= enddate
+'Do While dt <= enddate
     sdt = CStr(dt)
     sdt = Replace(sdt, "/", "-")
-    WebBrowser1.Navigate "http://www.okooo.com/jingcai/shuju/peilv/" + sdt
+    WebBrowser1.Navigate "http://www.okooo.com/danchang/shuju/peilv/"  '+ sdt
 '    WebBrowser1.Refresh
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
@@ -674,7 +674,7 @@ Do While dt <= enddate
     
     dt = DateAdd("d", 1, dt)   '增加一天
     Sleep 150
-Loop
+'Loop
 wkSheet.Cells(1, 1) = totcnt
     WebBrowser1.Navigate "about:blank"
     Set wkSheet = Nothing
@@ -859,10 +859,10 @@ totcnt = 1
 
 Set WebBrowser1 = UserForm1.WebBrowser1
 dt = begindate
-Do While dt <= enddate
+'Do While dt <= enddate
     sdt = CStr(dt)
     sdt = Replace(sdt, "/", "-")
-    WebBrowser1.Navigate "http://www.okooo.com/jingcai/shuju/pankou/" + sdt
+    WebBrowser1.Navigate "http://www.okooo.com/danchang/shuju/pankou/"    '+ sdt
 '    WebBrowser1.Refresh
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
@@ -925,7 +925,7 @@ Do While dt <= enddate
     
     dt = DateAdd("d", 1, dt)   '增加一天
     Sleep 150
-Loop
+'Loop
 wkSheet.Cells(1, 1) = totcnt
     WebBrowser1.Navigate "about:blank"
     Set wkSheet = Nothing
