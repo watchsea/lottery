@@ -1,6 +1,6 @@
 ﻿Attribute VB_Name = "test"
 Sub 程序升级()
-    Call 程序升级20180818
+    Call 程序升级20180827
 End Sub
 Sub 程序升级20180715()
 
@@ -415,6 +415,120 @@ Sub 程序升级20180818()
 End Sub
 
 
+Sub 程序升级20180827()
+
+    Dim sheet1 As Worksheet
+    Dim tmClBgCol As Long       '等处理数据所在列
+    Dim colDesp
+    Dim colIndex
+    Dim insertColIdx
+
+    Set sheet1 = ActiveWorkbook.Sheets("综合数据")
+    Call 初始化一般字典(dataColDict, sheet1, 4, 0, 1, False)
+    
+    '数据按从后往前的顺序排列。这样有效的利用现有的字典中列的值。
+    
+    colDesp = Split("99家平均,澳门,Bet365", ",")
+    colIndex = Split("99AVGRATIO,DATAM,DATAB", ",")
+    insertColIdx = Split("CMPRATIO,DATAJ,DATAM", ",")
+    
+    If UBound(colDesp) <> UBound(colIndex) Or UBound(colIndex) <> UBound(insertColIdx) Then
+        MsgBox ("升级失败！")
+        Exit Sub
+    End If
+    
+    For i = 0 To UBound(colIndex)
+        tmClBgCol = dataColDict.Item(colIndex(i) & "_1")
+    
+        If tmClBgCol = 0 Then
+            i2 = dataColDict.Item(insertColIdx(i))
+            '加入3列
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+            sheet1.Cells.Columns(i2).Insert
+    
+            
+            sheet1.Range(Cells(2, i2), Cells(2, i2 + 2)).Merge
+            sheet1.Cells(2, i2) = colDesp(i) & "-初始"
+            sheet1.Cells(3, i2) = "胜"
+            sheet1.Cells(3, i2 + 1) = "平"
+            sheet1.Cells(3, i2 + 2) = "负"
+            sheet1.Cells(4, i2) = colIndex(i) & "_1"
+            
+            sheet1.Range(Cells(2, i2 + 3), Cells(2, i2 + 5)).Merge
+            sheet1.Cells(2, i2 + 3) = colDesp(i) & "-即时一"
+            sheet1.Cells(3, i2 + 3) = "胜"
+            sheet1.Cells(3, i2 + 4) = "平"
+            sheet1.Cells(3, i2 + 5) = "负"
+            sheet1.Cells(4, i2 + 3) = colIndex(i) & "_2"
+    
+            sheet1.Range(Cells(2, i2 + 6), Cells(2, i2 + 8)).Merge
+            sheet1.Cells(2, i2 + 6) = colDesp(i) & "-即时二"
+            sheet1.Cells(3, i2 + 6) = "胜"
+            sheet1.Cells(3, i2 + 7) = "平"
+            sheet1.Cells(3, i2 + 8) = "负"
+            sheet1.Cells(4, i2 + 6) = colIndex(i) & "_3"
+            
+            sheet1.Range(Cells(2, i2), Cells(3, i2 + 8)).Borders.LineStyle = 1
+            MsgBox (colDesp(i) & "-分析程序更新完毕！")
+        Else
+            MsgBox (colDesp(i) & "-分析程序已更新！")
+        End If
+    Next
+    
+    
+    '重新加载一次列字典，以更新前面追加的列信息
+    Call 初始化一般字典(dataColDict, sheet1, 4, 0, 1, False)
+    
+    '一次性增加，按正序排列
+    colDesp = Split("赔2,赔1", ",")
+    colIndex = Split("LOSE2,LOSE1", ",")
+    insertColIdx = Split("即时二,即时一,初始", ",")
+    
+    If UBound(colDesp) <> UBound(colIndex) Then
+        MsgBox ("升级失败！")
+        Exit Sub
+    End If
+    
+    tmClBgCol = dataColDict.Item(colIndex(0) & "_1")
+    
+    
+    If tmClBgCol = 0 Then
+        i2 = dataColDict.Item("BF1")
+        
+        For i = 0 To 2    '初始、即时一、即时二
+        
+            For j = 0 To UBound(colIndex)
+                '加入3列
+                sheet1.Cells.Columns(i2).Insert
+                sheet1.Cells.Columns(i2).Insert
+                sheet1.Cells.Columns(i2).Insert
+        
+                
+                sheet1.Range(Cells(2, i2), Cells(2, i2 + 2)).Merge
+                sheet1.Cells(2, i2) = colDesp(j) & "-" & insertColIdx(i)
+                sheet1.Cells(3, i2) = "胜"
+                sheet1.Cells(3, i2 + 1) = "平"
+                sheet1.Cells(3, i2 + 2) = "负"
+                sheet1.Cells(4, i2) = colIndex(j) & "_" & (3 - i)
+            Next
+        Next
+        MsgBox (colDesp(0) & "-分析程序更新完毕！")
+    Else
+        MsgBox (colDesp(0) & "-分析程序已更新！")
+    End If
+
+    
+    
+End Sub
+
+
 
 
 Sub 网站数据导入测试()
@@ -426,8 +540,8 @@ Dim enddate As Date
     
     'Call 澳客网必发盈亏(begindate, enddate)
     'Call 澳客网胜负指数(begindate, enddate)
-    'Call 澳客网盘口评测(begindate, enddate)
+    Call 澳客网盘口评测(begindate, enddate)
     'Call 澳客网凯利指数(begindate, enddate)
-    Call 澳客网数据载入
+    'Call 澳客网数据载入
     MsgBox ("导入完毕！")
 End Sub

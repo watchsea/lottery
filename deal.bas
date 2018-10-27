@@ -1308,9 +1308,9 @@ schemaCol81 = dataColDict.Item("SCHEMA8_1")
 
 
 '判断最近升级是否完毕
-usrCol = dataColDict.Item("SCHEMA1_1")
+usrCol = dataColDict.Item("DATAB_1")
 If usrCol = 0 Then
-    MsgBox ("2018.8.18升级未完成！请先执行程序升级....")
+    MsgBox ("2018.8.27升级未完成！请先执行程序升级....")
     Exit Sub
 End If
 
@@ -1577,6 +1577,41 @@ For i = 0 To UBound(data)
         '-----------------------------------------
         'add end  2018.8.13
         '-----------------------------------------
+        'Bet365数据列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 3, 1, "DATAB_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 3, 2, "DATAB_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 3, 3, "DATAB_3", 1)
+        
+        
+        '澳门彩票数据列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 3, 1, "DATAM_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 3, 2, "DATAM_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 3, 3, "DATAM_3", 1)
+        
+        
+        '赔1数据列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "LOSE1", 1, 3, 1, "LOSE1_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "LOSE1", 1, 3, 2, "LOSE1_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "LOSE1", 1, 3, 3, "LOSE1_3", 1)
+        
+        
+        '赔2数据列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "LOSE2", 1, 3, 1, "LOSE2_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "LOSE2", 1, 3, 2, "LOSE2_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "LOSE2", 1, 3, 3, "LOSE2_3", 1)
+        
+        '99家平均比例数据列转行
+        Call 通用列转行(dataSheet, j, dataColDict, "99AVGRATIO", 1, 3, 1, "99AVGRATIO_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "99AVGRATIO", 1, 3, 2, "99AVGRATIO_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "99AVGRATIO", 1, 3, 3, "99AVGRATIO_3", 1)
+        '----------------------------------------
+        'add begin 2018.8.27
+        '----------------------------------------
+        
+        '----------------------------------------
+        'add end 2018.8.27
+        '----------------------------------------
+
 
         '-----------------------------------------
         'add by ljqu 2018.8.18
