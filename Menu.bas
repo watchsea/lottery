@@ -9,12 +9,21 @@ Sub AddCommandbars()
     Application.CommandBars("彩票分析").Visible = True
     With Application.CommandBars("彩票分析").Controls
          With .Add(1, , , , True)
-            .Caption = "网站数据"
+            .Caption = "球探和竞彩网数据"
             .Visible = True
             .Style = msoButtonIconAndCaption
             .FaceId = 10
             .OnAction = "网站数据更新"
         End With
+        
+        With .Add(1, , , , True)
+            .Caption = "澳客网数据"
+            .Visible = True
+            .Style = msoButtonIconAndCaption
+            .FaceId = 10
+            .OnAction = "澳客网数据更新"
+        End With
+
         
         With .Add(1, , , , True)
             .Caption = "初始"

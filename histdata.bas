@@ -1,6 +1,10 @@
 ﻿Attribute VB_Name = "histdata"
 Option Explicit
-Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+#If Win64 Then
+    Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+#Else
+    Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+#End If
 
 Sub 历史数据加载()
     Dim begindate As Date
@@ -61,7 +65,7 @@ Dim col As Long
 Dim tt As Object
 Dim tt1 As Object
 Dim tt2, tt3
-Dim url
+Dim URL
 Dim wkSheet As Worksheet
 Dim isFirst As Boolean
 Dim shCounter As Integer    '工作表记录指针
@@ -81,14 +85,14 @@ shCounter = 1             '第一次从cells(1,1)开始
 calDate = begindate
 Do While calDate <= enddate
 
-    url = "http://1x2.win007.com/Companyhistory.aspx?type=1&"    'type=1表示的指定日期的数据
-    url = url + ids
+    URL = "http://1x2.win007.com/Companyhistory.aspx?type=1&"    'type=1表示的指定日期的数据
+    URL = URL + ids
     
-    url = url + "&matchdate=" + CStr(calDate)
+    URL = URL + "&matchdate=" + CStr(calDate)
     
     Set IE = UserForm1.WebBrowser1
     With IE
-      .Navigate url '网址
+      .Navigate URL '网址
       Do Until .ReadyState = 4
         DoEvents
       Loop
@@ -102,7 +106,7 @@ Do While calDate <= enddate
         Set wkSheet = Nothing
         Exit Function
     End If
-    Set tt = doc.getelementbyid("table_schedule").getElementsByTagName("tr")
+    Set tt = doc.getElementById("table_schedule").getElementsbyTagName("tr")
     rowcnt = tt.Length - 1
     colCnt = tt(0).Cells.Length - 1
     col = 0
@@ -184,6 +188,8 @@ End Function
 Sub 澳客网必发盈亏(begindate As Date, enddate As Date)
 
 Dim doc As Object 'MSHTML.HTMLDocument
+Dim objXml As Object
+Dim oDoc As Object
 Dim txt As String
 Dim txt1
 
@@ -203,6 +209,12 @@ Dim WebBrowser1 As Object
 Dim wkSheet As Worksheet
 Dim dt As Date
 Dim sdt As String
+
+Dim URL As String, postData As String
+
+
+Dim waitcnt As Integer   '延时等待次数   ,   2018.11.1  为了处理在加载过程部分页面无响应而导致的程序死循环而设计
+Dim errorinfo As String   '记录被装载跳过的页数  2018.11.1  为了处理在加载过程部分页面无响应而导致的程序死循环而设计
 
 'dt = "2014-9-27"
 
@@ -276,6 +288,9 @@ wkSheet.Columns("H:H").NumberFormatLocal = "@"
 totcnt = 1
 
 Set WebBrowser1 = UserForm1.WebBrowser1
+Set objXml = CreateObject("MSXML2.XMLHTTP")
+Set oDoc = CreateObject("htmlfile")
+
 dt = begindate
 'Do While dt <= dt    '无法处理历史数据，所以只一次循环即可，将enddate改为begindate
     sdt = CStr(dt)
@@ -287,7 +302,7 @@ dt = begindate
         DoEvents
     Loop
     Set doc = WebBrowser1.Document
-    Set tbody = doc.getElementsByTagName("div")
+    Set tbody = doc.getElementsbyTagName("div")
     
     
     '***********************************************
@@ -297,6 +312,8 @@ dt = begindate
     '***********************************************
     recCnt = 0
     pageCnt = 0
+    
+    
 
     For Each ucell In tbody
         If ucell.className = "pagination" Then    '获取页数信息
@@ -321,19 +338,85 @@ dt = begindate
         ReDim data(recCnt, 47)
         rowcnt = 1
         rowcnt = 规范澳客网必发盈亏数据(doc, rowcnt, data, dt)
+        
+        '处理后续网页的参数
+        '球队
+        postData = "LeagueID="
+        Set oDoc = doc.getElementById("csfilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        '让球数据
+        postData = postData & "&HandicapNumber="
+        Set oDoc = doc.getElementById("rqfilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        
+        '数据
+        postData = postData & "&BetDate="
+        Set oDoc = doc.getElementById("datafilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        
+        'MakerType  &  HasEnd
+        postData = postData & "&MakerType=undefined&HasEnd=1&PageID="  '2, pageNo
+        
     End If
     
     '处理剩余页面的数据
+    errorinfo = ""
     For i = 2 To pageCnt
-        Sleep 500
-        WebBrowser1.Navigate "javascript:JsGoTo(" + CStr(i) + ")"     '原有分号，2015.7.27去掉“;"
-        Do Until WebBrowser1.ReadyState = 4
+        Sleep 500 * Round(Rnd, 2) + 500 * Round(Rnd, 2) + 1000 * Round(Rnd, 3)
+        
+        
+    
+        'URL = "http://www.okooo.com/danchang/shuju/betfa"
+        'postData = postData & i
+        URL = "http://www.okooo.com/danchang/shuju/betfa?" & postData & i
+        Debug.Print URL
+        WebBrowser1.Navigate URL   '"javascript:JsGoTo(" + CStr(i) + ")"     '原有分号，2015.7.27去掉“;"
+        waitcnt = 0
+        Do Until WebBrowser1.ReadyState = 4 Or waitcnt > 30
+            Sleep 1000
+            waitcnt = waitcnt + 1
+            If waitcnt > 30 Then    '超过10S的等待则跳过
+                errorinfo = errorinfo & i & ","
+            End If
             DoEvents
         Loop
-        Set doc = WebBrowser1.Document
-        '处理相关资料
-        rowcnt = 规范澳客网必发盈亏数据(doc, rowcnt, data, dt)
+        If WebBrowser1.ReadyState = 4 Then
+            Set doc = WebBrowser1.Document
+            '处理相关资料
+            rowcnt = 规范澳客网必发盈亏数据(doc, rowcnt, data, dt)
+        End If
+        
     Next i
+    If errorinfo <> "" Then
+        MsgBox ("必发赢亏数据加载失败的页数包括(" & errorinfo & ")")
+    End If
     
     '数据过录
     For i = 1 To recCnt
@@ -575,6 +658,15 @@ Dim dt As Date
 Dim sdt As String
 
 
+'add by ljqu  2018.12.14
+Dim URL As String, postData As String
+Dim oDoc As Object
+'add 2018.12.14 end
+
+Dim waitcnt As Integer   '延时等待次数   ,   2018.11.1  为了处理在加载过程部分页面无响应而导致的程序死循环而设计
+Dim errorinfo As String   '记录被装载跳过的页数  2018.11.1  为了处理在加载过程部分页面无响应而导致的程序死循环而设计
+
+
 Set wkSheet = ActiveWorkbook.Sheets("澳客网(3)")
 wkSheet.Cells.Clear
 
@@ -619,7 +711,7 @@ dt = begindate
         DoEvents
     Loop
     Set doc = WebBrowser1.Document
-    Set tbody = doc.getElementsByTagName("div")
+    Set tbody = doc.getElementsbyTagName("div")
 
 
     '***********************************************
@@ -653,21 +745,85 @@ dt = begindate
         ReDim data(recCnt, 23)
         rowcnt = 1
         rowcnt = 规范澳客网凯利指数(doc, rowcnt, data, dt)
+        
+        '处理后续页面的参数
+        postData = "LeagueID="
+        Set oDoc = doc.getElementById("csfilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        '让球数据
+        postData = postData & "&HandicapNumber="
+        Set oDoc = doc.getElementById("rqfilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        
+        '数据
+        postData = postData & "&BetDate="
+        Set oDoc = doc.getElementById("datafilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        
+        'MakerType
+        Set oDoc = doc.getElementById("makerTypeObj")
+        postData = postData & "&MakerType=" & oDoc.select_company
+        '&  HasEnd
+        postData = postData & "&HasEnd=1&PageID="  '2, pageNo
     End If
 
     '处理剩余页面的数据
+    errorinfo = ""
     For i = 2 To pageCnt
-        Sleep 150
-        WebBrowser1.Navigate "javascript:JsGoTo(" + CStr(i) + ")"   '原有分号，2015.7.27去掉“;"
-        Do Until WebBrowser1.ReadyState = 4
+        Sleep 500 * Round(Rnd, 2) + 500 * Round(Rnd, 2) + 1000 * Round(Rnd, 3)
+        
+        URL = "http://www.okooo.com/danchang/shuju/peilv?" & postData & i
+        Debug.Print URL
+        WebBrowser1.Navigate URL   '"javascript:JsGoTo(" + CStr(i) + ")"     '原有分号，2015.7.27去掉“;"
+        
+        waitcnt = 0
+        Do Until WebBrowser1.ReadyState = 4 Or waitcnt > 30
+            Sleep 1000
+            waitcnt = waitcnt + 1
+            If waitcnt > 30 Then    '超过10S的等待则跳过
+                errorinfo = errorinfo & i & ","
+            End If
             DoEvents
         Loop
-        Set doc = WebBrowser1.Document
-        '处理相关资料
-        rowcnt = 规范澳客网凯利指数(doc, rowcnt, data, dt)
+        If WebBrowser1.ReadyState = 4 Then
+            Set doc = WebBrowser1.Document
+            '处理相关资料
+            rowcnt = 规范澳客网凯利指数(doc, rowcnt, data, dt)
+        End If
     Next i
     
+    If errorinfo <> "" Then
+        MsgBox ("凯利指数数据加载失败的页数包括(" & errorinfo & ")")
+    End If
     
+    '数据过录到EXCEL
     For i = 1 To recCnt
         For j = 0 To 23
             wkSheet.Cells(i + totcnt, j + 1) = data(i, j)
@@ -803,6 +959,14 @@ Dim wkSheet As Worksheet
 Dim dt As Date
 Dim sdt As String
 
+'add by ljqu  2018.12.14
+Dim URL As String, postData As String
+Dim oDoc As Object
+'add 2018.12.14 end
+
+
+Dim waitcnt As Integer   '延时等待次数   ,   2018.11.1  为了处理在加载过程部分页面无响应而导致的程序死循环而设计
+Dim errorinfo As String   '记录被装载跳过的页数  2018.11.1  为了处理在加载过程部分页面无响应而导致的程序死循环而设计
 
 Set wkSheet = ActiveWorkbook.Sheets("澳客网(4)")
 wkSheet.Cells.Clear
@@ -876,7 +1040,7 @@ dt = begindate
         DoEvents
     Loop
     Set doc = WebBrowser1.Document
-    Set tbody = doc.getElementsByTagName("div")
+    Set tbody = doc.getElementsbyTagName("div")
 
     '***********************************************
     '   由于在实际的页面访问中会出现500错误
@@ -908,21 +1072,86 @@ dt = begindate
         ReDim data(recCnt, 49)
         rowcnt = 1
         rowcnt = 规范澳客网盘口评测(doc, rowcnt, data, dt)
+        '球队
+        
+        postData = "LeagueID="
+        Set oDoc = doc.getElementById("csfilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        '让球数据
+        postData = postData & "&HandicapNumber="
+        Set oDoc = doc.getElementById("rqfilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        
+        '数据
+        postData = postData & "&BetDate="
+        Set oDoc = doc.getElementById("datafilter").getElementsbyTagName("input")
+        k = 0
+        For Each ucell In oDoc
+            If ucell.Checked = True Then
+                postData = postData & ucell.Value
+                k = k + 1
+            End If
+            If k < oDoc.Length Then
+                postData = postData & "%2C"
+            End If
+        Next
+        
+        'MakerType
+        Set oDoc = doc.getElementById("makerTypeObj")
+        postData = postData & "&MakerType=" & oDoc.select_company
+        '&  HasEnd
+        postData = postData & "&HasEnd=1&PageID="  '2, pageNo
+        
     End If
 
     '处理剩余页面的数据
+    errorinfo = ""
     For i = 2 To pageCnt
-        Sleep 150
-        WebBrowser1.Navigate "javascript:JsGoTo(" + CStr(i) + ");"
-        Do Until WebBrowser1.ReadyState = 4
+        Sleep 500 * Round(Rnd, 2) + 500 * Round(Rnd, 2) + 1000 * Round(Rnd, 3)
+        
+        URL = "http://www.okooo.com/danchang/shuju/pankou?" & postData & i
+        Debug.Print URL
+        WebBrowser1.Navigate URL   '"javascript:JsGoTo(" + CStr(i) + ")"     '原有分号，2015.7.27去掉“;"
+        waitcnt = 0
+        Do Until WebBrowser1.ReadyState = 4 Or waitcnt > 30
+            Sleep 1000
+
+            waitcnt = waitcnt + 1
+            If waitcnt > 30 Then    '超过10S的等待则跳过
+                errorinfo = errorinfo & i & ","
+            End If
             DoEvents
         Loop
-        Set doc = WebBrowser1.Document
-        '处理相关资料
-        rowcnt = 规范澳客网盘口评测(doc, rowcnt, data, dt)
+        If WebBrowser1.ReadyState = 4 Then
+            Set doc = WebBrowser1.Document
+            '处理相关资料
+            rowcnt = 规范澳客网盘口评测(doc, rowcnt, data, dt)
+        End If
     Next i
     
+    If errorinfo <> "" Then
+        MsgBox ("盘口评测数据加载失败的页数包括(" & errorinfo & ")")
+    End If
     
+    '数据过录
     For i = 1 To recCnt
         For j = 0 To 49
             wkSheet.Cells(i + totcnt, j + 1) = data(i, j)
@@ -934,7 +1163,7 @@ dt = begindate
     dt = DateAdd("d", 1, dt)   '增加一天
     Sleep 150
 'Loop
-wkSheet.Cells(1, 1) = totcnt
+    wkSheet.Cells(1, 1) = totcnt
     WebBrowser1.Navigate "about:blank"
     Set wkSheet = Nothing
     

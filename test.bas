@@ -531,7 +531,7 @@ End Sub
 
 
 
-Sub 网站数据导入测试()
+Sub 澳客网数据导入()
 Dim begindate As Date
 Dim enddate As Date
 
@@ -540,8 +540,8 @@ Dim enddate As Date
     
     'Call 澳客网必发盈亏(begindate, enddate)
     'Call 澳客网胜负指数(begindate, enddate)
-    Call 澳客网盘口评测(begindate, enddate)
-    'Call 澳客网凯利指数(begindate, enddate)
+    'Call 澳客网盘口评测(begindate, enddate)
+    Call 澳客网凯利指数(begindate, enddate)
     'Call 澳客网数据载入
     MsgBox ("导入完毕！")
 End Sub

@@ -1,8 +1,97 @@
 ﻿Attribute VB_Name = "netdataload"
 Option Explicit
-Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+#If Win64 Then
+    Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+#Else
+    Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+#End If
+
 
 Sub 网站数据更新()
+Dim matchdate As Date
+Dim begindate As Date
+Dim enddate As Date
+
+'状态信息
+Dim infoStr As String
+Dim s1 As String
+Dim s2 As String
+Dim s3 As String
+Dim s8 As String
+Dim s9 As String
+
+
+
+'记录运行时间
+Dim bgTm
+
+Dim exectm
+
+s1 = "1.球探网威廉希尔数据"
+s2 = "2.球探网BF数据"
+s3 = "3.球探网赛事积分数据"
+s8 = "4.竞彩网数据"
+
+
+matchdate = Date
+    
+    Call 初始化字典(leagueDict, "01赛事")
+    
+    bgTm = Now
+    Application.StatusBar = "球探网威廉希尔数据导入【" & bgTm & "】......"
+    Call 球探网数据载入("球探网(W)", "id=115&company=威廉希尔(英国)", matchdate)
+    exectm = DateDiff("m", bgTm, Now)
+    s1 = s1 & "，已完成导入，耗时：" & exectm & "分"
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    MsgBox (infoStr)
+    
+    
+    bgTm = Now
+    Application.StatusBar = "球探网BF数据导入【" & bgTm & "】......"
+    Call 球探网BF数据载入
+    exectm = DateDiff("m", bgTm, Now)
+    s2 = s2 & "，已完成导入，耗时：" & exectm & "分"
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    MsgBox (infoStr)
+    
+    
+    
+    bgTm = Now
+    Application.StatusBar = "球探网赛事积分数据导入【" & bgTm & "】......"
+    Call 球探网赛事积分数据载入
+    exectm = DateDiff("n", bgTm, Now)
+    s3 = s3 & "，已完成导入，耗时：" & exectm & "分"
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    MsgBox (infoStr)
+    
+    
+    
+    
+    bgTm = Now
+    Application.StatusBar = "竞彩网数据导入【" & bgTm & "】......"
+    Call 中国竞彩网数据载入
+    'add 2016.8.11 by ljqu
+    Application.StatusBar = "竞彩网投资比例数据导入【" & bgTm & "】......"
+    Call 竞彩网投资比例数据载入    '此处有依赖关系，依赖于前一个数据的导入
+    Application.StatusBar = "竞彩网比分数据导入【" & bgTm & "】......"
+    Call 竞彩网比分数据载入
+    Application.StatusBar = "竞彩网总进球数据导入【" & bgTm & "】......"
+    Call 竞彩网总进球数据载入
+    Application.StatusBar = "竞彩网半全场胜平负数据导入【" & bgTm & "】......"
+    Call 竞彩网半全场胜平负数据载入
+    exectm = DateDiff("n", bgTm, Now)
+    s8 = s8 & "，已完成导入，耗时：" & exectm & "分"
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    MsgBox (infoStr)
+    
+    Application.StatusBar = "球探网和竞彩网站数据导入完毕！"
+    MsgBox ("球探网和竞彩网站数据导入完毕！")
+    
+    
+End Sub
+
+
+Sub 澳客网数据更新()
 Dim matchdate As Date
 Dim begindate As Date
 Dim enddate As Date
@@ -26,51 +115,16 @@ Dim bgTm
 
 Dim exectm
 
-s1 = "1.球探网威廉希尔数据"
-s2 = "2.球探网BF数据"
-s3 = "3.球探网赛事积分数据"
-s4 = "4.澳客网必发盈亏数据"
-s5 = "5.澳客网胜负指数数据"
-s6 = "6.澳客网盘口评测数据"
-s7 = "7.澳客网凯利指数数据"
-s8 = "8.竞彩网数据"
-s9 = "9.澳客网期数数据"
+s4 = "1.澳客网必发盈亏数据"
+s5 = "2.澳客网胜负指数数据"
+s6 = "3.澳客网盘口评测数据"
+s7 = "4.澳客网凯利指数数据"
+s9 = "5.澳客网期数数据"
 
 
 matchdate = Date
     
     Call 初始化字典(leagueDict, "01赛事")
-    
-    bgTm = Now
-    Application.StatusBar = "球探网威廉希尔数据导入【" & bgTm & "】......"
-    Call 球探网数据载入("球探网(W)", "id=115&company=威廉希尔(英国)", matchdate)
-    exectm = DateDiff("m", bgTm, Now)
-    s1 = s1 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
-    MsgBox (infoStr)
-    
-    
-    bgTm = Now
-    Application.StatusBar = "球探网BF数据导入【" & bgTm & "】......"
-    Call 球探网BF数据载入
-    exectm = DateDiff("m", bgTm, Now)
-    s2 = s2 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
-    MsgBox (infoStr)
-    
-    
-    
-    bgTm = Now
-    Application.StatusBar = "球探网赛事积分数据导入【" & bgTm & "】......"
-    Call 球探网赛事积分数据载入
-    exectm = DateDiff("n", bgTm, Now)
-    s3 = s3 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
-    MsgBox (infoStr)
-    
     
     '澳客网数据导入
     
@@ -81,74 +135,54 @@ matchdate = Date
     Call 澳客网必发盈亏(begindate, enddate)
     exectm = DateDiff("n", bgTm, Now)
     s4 = s4 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
+    infoStr = s4 & Chr(10) & s5 & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s9
     MsgBox (infoStr)
-    
+    Sleep (2000 * (Rnd(2) + 1))
     
     bgTm = Now
     Application.StatusBar = "澳客网胜负指数数据导入【" & bgTm & "】......"
     Call 澳客网胜负指数(begindate, enddate)
     exectm = DateDiff("n", bgTm, Now)
     s5 = s5 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
+    infoStr = s4 & Chr(10) & s5 & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s9
     MsgBox (infoStr)
-    
+    Sleep (2000 * (Rnd(2) + 1))
     
     bgTm = Now
     Application.StatusBar = "澳客网盘口评测数据导入【" & bgTm & "】......"
     Call 澳客网盘口评测(begindate, enddate)
     exectm = DateDiff("n", bgTm, Now)
     s6 = s6 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
+    infoStr = s4 & Chr(10) & s5 & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s9
     MsgBox (infoStr)
-    
+    Sleep (2000 * (Rnd(2) + 1))
     
     bgTm = Now
     Application.StatusBar = "澳客网凯利指数数据导入【" & bgTm & "】......"
     Call 澳客网凯利指数(begindate, enddate)
     exectm = DateDiff("n", bgTm, Now)
     s7 = s7 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
+    infoStr = s4 & Chr(10) & s5 & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s9
     MsgBox (infoStr)
-    
-    
-    bgTm = Now
-    Application.StatusBar = "竞彩网数据导入【" & bgTm & "】......"
-    Call 中国竞彩网数据载入
-    'add 2016.8.11 by ljqu
-    Application.StatusBar = "竞彩网投资比例数据导入【" & bgTm & "】......"
-    Call 竞彩网投资比例数据载入    '此处有依赖关系，依赖于前一个数据的导入
-    Application.StatusBar = "竞彩网比分数据导入【" & bgTm & "】......"
-    Call 竞彩网比分数据载入
-    Application.StatusBar = "竞彩网总进球数据导入【" & bgTm & "】......"
-    Call 竞彩网总进球数据载入
-    Application.StatusBar = "竞彩网半全场胜平负数据导入【" & bgTm & "】......"
-    Call 竞彩网半全场胜平负数据载入
-    exectm = DateDiff("n", bgTm, Now)
-    s8 = s8 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
-    MsgBox (infoStr)
-    
+    Sleep (2000 * (Rnd(2) + 1))
     
     bgTm = Now
     Application.StatusBar = "澳客网数据导入【" & bgTm & "】......"
     Call 澳客网数据载入
     exectm = DateDiff("n", bgTm, Now)
     s9 = s9 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5
-    infoStr = infoStr & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s8 & Chr(10) & s9
+    infoStr = s4 & Chr(10) & s5 & Chr(10) & s6 & Chr(10) & s7 & Chr(10) & s9
     MsgBox (infoStr)
     
-    Application.StatusBar = "网站数据导入完毕！"
-    MsgBox ("网站数据导入完毕！")
+    Application.StatusBar = "澳客网数据导入完毕！"
+    MsgBox ("澳客网数据导入完毕！")
     
     
 End Sub
+
+
+
+
 
 Sub 球探网BF数据载入()
 '------------------------------------------------------------
@@ -361,20 +395,20 @@ Dim index       'game=Array的在文本中的索引位置
 Dim winhttp As Object
 Dim tt
 Dim tt1, tt2, tt3
-Dim url
+Dim URL
 
 'url = "http://1x2.nowscore.com/" + ids + ".js"
 '2018.3.4 网站变更取数方式
-url = "http://1x2d.win007.com/" + ids + ".js"
+URL = "http://1x2d.win007.com/" + ids + ".js"
         Set winhttp = CreateObject("WinHttp.WinHttpRequest.5.1")
      With winhttp
          .Option(6) = 1
          .Option(2) = 936   '65001      ' 936或950或65001           'GB2312/BIG5/UTF-8
-         .Open "GET", url, False         '第二次取得数据"
+         .Open "GET", URL, False         '第二次取得数据"
          .setRequestHeader "Connection", "Keep-Alive"
          .send
          '将二进制转换UTF-8
-         tt = BytesToBstr(.ResponseBody, "UTF-8")
+         tt = BytesToBstr(.responseBody, "UTF-8")
          
      End With
      
@@ -484,21 +518,21 @@ Dim col As Long
 Dim tt As Object
 Dim tt1 As Object
 Dim tt2, tt3
-Dim url
+Dim URL
 Dim wkSheet As Worksheet
 
 
 
 'ids = "1014941"   '"987108"
 
-url = "http://op1.win007.com/company.aspx?"                  '没有加参数type=1的表示当前以后所有数据
+URL = "http://op1.win007.com/company.aspx?"                  '没有加参数type=1的表示当前以后所有数据
 
-url = url + ids
+URL = URL + ids
 
 Set IE = UserForm1.WebBrowser1
 
 With IE
-  .Navigate url '网址
+  .Navigate URL '网址
   Do Until .ReadyState = 4
     DoEvents
   Loop
@@ -506,7 +540,7 @@ With IE
 End With
 'Application.ScreenUpdating = False
 
-Set tt = doc.getelementbyid("table_schedule").getElementsByTagName("tr")
+Set tt = doc.getElementById("table_schedule").getElementsbyTagName("tr")
 rowcnt = tt.Length - 1
 colCnt = tt(0).Cells.Length - 1
 col = 0
@@ -602,7 +636,7 @@ Sub 中国竞彩网数据载入()
          .setRequestHeader "Connection", "Keep-Alive"
          .send
          '将二进制转换UTF-8
-         tt = BytesToBstr(.ResponseBody, "UTF-8")
+         tt = BytesToBstr(.responseBody, "UTF-8")
          '将UTF-8转换为汉字
          tt1 = UTF8toChineseCharacters(tt)
          tt = Mid(tt1, 9, Len(tt1) - 10)
@@ -720,13 +754,13 @@ Dim colCnt As Integer
 
 Dim tt As Object
 Dim tt1, tt2, tt3
-Dim url
+Dim URL
 
-url = "http://zq.win007.com/analysis/" + ids + "cn.htm"
+URL = "http://zq.win007.com/analysis/" + ids + "cn.htm"
 
 Set IE = UserForm1.WebBrowser1
 With IE
-  .Navigate url '网址
+  .Navigate URL '网址
   
   Do Until .ReadyState = 4
     DoEvents
@@ -742,11 +776,11 @@ ReDim dataAvg(103)   '0-43,主队积分信息，44-87：客队积分信息，
 rowcnt = 7
 colCnt = 10
 
-    If doc.getelementbyid("porlet_5") Is Nothing Then
+    If doc.getElementById("porlet_5") Is Nothing Then
         取球队联赛积分 = False
         Exit Function
     End If
-    Set tt = doc.getelementbyid("porlet_5").ChildNodes(0).ChildNodes(1)   '取联赛积分排名数据
+    Set tt = doc.getElementById("porlet_5").ChildNodes(0).ChildNodes(1)   '取联赛积分排名数据
     Set tt1 = tt.Cells(0).ChildNodes(0).ChildNodes(0)     '主队全场数据，保存：总、主、客、近6
     Set tt2 = tt.Cells(1).ChildNodes(0).ChildNodes(0)     '客队全场数据，保存：总、主、客、近6
     If tt1.ChildNodes.Length = 6 Then
@@ -770,9 +804,9 @@ colCnt = 10
      Next
      
      '获取即时赔率比较
-     If doc.getelementbyid("porlet_1").ChildNodes.Length > 0 Then
+     If doc.getElementById("porlet_1").ChildNodes.Length > 0 Then
      
-        Set tt = doc.getelementbyid("porlet_1").ChildNodes(1).ChildNodes(0)   '取联赛积分排名数据
+        Set tt = doc.getElementById("porlet_1").ChildNodes(1).ChildNodes(0)   '取联赛积分排名数据
         
         For i = 0 To tt.Rows.Length - 1    '行
         
@@ -947,7 +981,7 @@ Sub 竞彩网比分数据载入()
          .setRequestHeader "Connection", "Keep-Alive"
          .send
          '将二进制转换UTF-8
-         tt = BytesToBstr(.ResponseBody, "UTF-8")
+         tt = BytesToBstr(.responseBody, "UTF-8")
          '将UTF-8转换为汉字
          tt1 = UTF8toChineseCharacters(tt)
          tt = Mid(tt1, 9, Len(tt1) - 10)
@@ -1128,7 +1162,7 @@ Sub 竞彩网总进球数据载入()
          .setRequestHeader "Connection", "Keep-Alive"
          .send
          '将二进制转换UTF-8
-         tt = BytesToBstr(.ResponseBody, "UTF-8")
+         tt = BytesToBstr(.responseBody, "UTF-8")
          '将UTF-8转换为汉字
          tt1 = UTF8toChineseCharacters(tt)
          tt = Mid(tt1, 9, Len(tt1) - 10)
@@ -1254,7 +1288,7 @@ Sub 竞彩网半全场胜平负数据载入()
          .setRequestHeader "Connection", "Keep-Alive"
          .send
          '将二进制转换UTF-8
-         tt = BytesToBstr(.ResponseBody, "UTF-8")
+         tt = BytesToBstr(.responseBody, "UTF-8")
          '将UTF-8转换为汉字
          tt1 = UTF8toChineseCharacters(tt)
          tt = Mid(tt1, 9, Len(tt1) - 10)
@@ -1387,7 +1421,7 @@ Sub 竞彩网投资比例数据载入()
          .setRequestHeader "Connection", "Keep-Alive"
          .send
          '将二进制转换UTF-8
-         tt = BytesToBstr(.ResponseBody, "UTF-8")
+         tt = BytesToBstr(.responseBody, "UTF-8")
          '将UTF-8转换为汉字
          tt1 = UTF8toChineseCharacters(tt)
          tt = Mid(tt1, 15, Len(tt1) - 16)
