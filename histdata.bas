@@ -450,7 +450,7 @@ Function 规范澳客网必发盈亏数据(doc As Object, cnt As Integer, BFarr,
 '-------------------------------------------------------------------------------------
 Dim divObjects As Object
 Dim divObj As Object
-Dim i, j, k, tt
+Dim i, j, k, tt, tt1
 Dim node As Object
 Dim BasicInfo As Object
 Dim Klinfo As Object
@@ -472,7 +472,13 @@ Dim Loc As Integer
                 BFarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
                 BFarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
                 tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-                BFarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)    '日期
+                tt1 = Split(tt(0), "-")(0)   '取月份
+                If Left(tt1, 2) = "12" And DatePart("m", pDt) = 1 Then
+                    tt1 = CStr(DatePart("yyyy", pDt) - 1) & "-" & tt(0)
+                Else
+                    tt1 = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)
+                End If
+                BFarr(Loc, 4) = tt1 'CStr(DatePart("yyyy", pDt)) & "-" & tt(0)    '日期
                 BFarr(Loc, 5) = tt(1)     '时间
                 For j = 0 To BasicInfo(1).ChildNodes.Length - 1
                     If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
@@ -536,7 +542,7 @@ Dim sdt As String
 Dim doc As Object
 Dim divObjects As Object
 Dim divObj As Object
-Dim i, j, tt
+Dim i, j, tt, tt1
 Dim node As Object
 Dim BasicInfo As Object
 Dim Klinfo As Object
@@ -596,7 +602,14 @@ dt = begindate
                 wkSheet.Cells(Loc, 3) = Right(Klinfo(j).Cells(0).innerText, 3)    '编号
                 wkSheet.Cells(Loc, 4) = Klinfo(j).Cells(1).innerText     '联赛
                 tt = Split(Klinfo(j).Cells(2).innerText, " ")
-                wkSheet.Cells(Loc, 5) = CStr(DatePart("yyyy", dt)) & "-" & tt(0)    '日期
+                
+                tt1 = Split(tt(0), "-")(0)   '取月份
+                If Left(tt1, 2) = "12" And DatePart("m", dt) = 1 Then
+                    tt1 = CStr(DatePart("yyyy", dt) - 1) & "-" & tt(0)
+                Else
+                    tt1 = CStr(DatePart("yyyy", dt)) & "-" & tt(0)
+                End If
+                wkSheet.Cells(Loc, 5) = tt1   'CStr(DatePart("yyyy", dt)) & "-" & tt(0)    '日期
                 wkSheet.Cells(Loc, 6) = tt(1)     '时间
                 
                 
@@ -853,7 +866,7 @@ Function 规范澳客网凯利指数(doc As Object, cnt As Integer, KLarr, pDt A
 '-------------------------------------------------------------------------------------
 Dim divObjects As Object
 Dim divObj As Object
-Dim i, j, tt
+Dim i, j, tt, tt1
 Dim node As Object
 Dim BasicInfo As Object
 Dim Klinfo As Object
@@ -875,7 +888,13 @@ Dim Loc As Integer
                   KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
                   KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
                   tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-                  KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                  tt1 = Split(tt(0), "-")(0)   '取月份
+                  If Left(tt1, 2) = "12" And DatePart("m", pDt) = 1 Then
+                    tt1 = CStr(DatePart("yyyy", pDt) - 1) & "-" & tt(0)
+                  Else
+                    tt1 = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)
+                  End If
+                  KLarr(Loc, 4) = tt1 'CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
                   KLarr(Loc, 5) = tt(1)     '时间
                   For j = 0 To BasicInfo(1).ChildNodes.Length - 1
                       If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
@@ -1181,7 +1200,7 @@ Function 规范澳客网盘口评测(doc As Object, cnt As Integer, KLarr, pDt A
 '-------------------------------------------------------------------------------------
 Dim divObjects As Object
 Dim divObj As Object
-Dim i, j, tt, k
+Dim i, j, tt, k, tt1
 Dim node As Object
 Dim BasicInfo As Object
 Dim Klinfo As Object
@@ -1203,7 +1222,13 @@ Dim Loc As Integer
                 KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
                 KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
                 tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-                KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                tt1 = Split(tt(0), "-")(0)   '取月份
+                If Left(tt1, 2) = "12" And DatePart("m", pDt) = 1 Then
+                    tt1 = CStr(DatePart("yyyy", pDt) - 1) & "-" & tt(0)
+                Else
+                    tt1 = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)
+                End If
+                KLarr(Loc, 4) = tt1 ' CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
                 KLarr(Loc, 5) = tt(1)     '时间
                 For j = 0 To BasicInfo(1).ChildNodes.Length - 1
                     If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then

@@ -539,9 +539,9 @@ Dim enddate As Date
     enddate = DateAdd("d", 2, Date)
     
     'Call 澳客网必发盈亏(begindate, enddate)
-    'Call 澳客网胜负指数(begindate, enddate)
+    Call 澳客网胜负指数(begindate, enddate)
     'Call 澳客网盘口评测(begindate, enddate)
-    Call 澳客网凯利指数(begindate, enddate)
+    'Call 澳客网凯利指数(begindate, enddate)
     'Call 澳客网数据载入
     MsgBox ("导入完毕！")
 End Sub
