@@ -129,7 +129,7 @@ matchdate = Date
     '澳客网数据导入
     
     bgTm = Now
-    begindate = Date 'DateAdd("d", -1, matchdate)
+    begindate = DateAdd("d", -1, matchdate)
     enddate = DateAdd("d", 2, matchdate)
     Application.StatusBar = "澳客网必发盈亏数据导入【" & bgTm & "】......"
     Call 澳客网必发盈亏(begindate, enddate)

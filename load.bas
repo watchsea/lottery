@@ -19,7 +19,7 @@ Dim str1 '日期
 Dim vsId    '对阵的ID
 Dim colCnt '列数
 
-colCnt = 13
+colCnt = 15
 
 Set wkSheet = ActiveWorkbook.Sheets(sheetName)
 cnt = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
@@ -44,10 +44,12 @@ Do While i <= cnt
             dataArr(Loc, 7) = wkSheet.Cells(i, 8) '主胜率(初始值)
             dataArr(Loc, 8) = wkSheet.Cells(i, 9) '和率(初始值)
             dataArr(Loc, 9) = wkSheet.Cells(i, 10) '客胜率(初始值)
-            dataArr(Loc, 10) = wkSheet.Cells(i, 17) '主胜率（即时值)
-            dataArr(Loc, 11) = wkSheet.Cells(i, 18) '和率（即时值)
-            dataArr(Loc, 12) = wkSheet.Cells(i, 19) '客胜率（即时值)
-            dataArr(Loc, 13) = wkSheet.Cells(i, 1) '比分
+            dataArr(Loc, 10) = wkSheet.Cells(i, 11)   '返还率（初始值）
+            dataArr(Loc, 11) = wkSheet.Cells(i, 17) '主胜率（即时值)
+            dataArr(Loc, 12) = wkSheet.Cells(i, 18) '和率（即时值)
+            dataArr(Loc, 13) = wkSheet.Cells(i, 19) '客胜率（即时值)
+            dataArr(Loc, 14) = wkSheet.Cells(i, 20)   '返还率（即时值)
+            dataArr(Loc, 15) = wkSheet.Cells(i, 1) '比分
             Loc = Loc + 1
         End If
         '指针移位
@@ -101,6 +103,8 @@ For i = 2 To rowNo
                 dataArr(Loc, j - 1) = wkSheet.Cells(i, j)
             End If
         Next
+        dataArr(Loc, 28) = dataArr(Loc, 20)    '2019.9.7 将beffair的返还率2的数据填入BF1的返还率（初始值)
+        dataArr(Loc, 32) = dataArr(Loc, 24)    '2019.9.7 将beffair的返还率2的数据填入BF1的返还率(即时值）。
         Loc = Loc + 1
     End If
 Next
@@ -109,11 +113,7 @@ ReDim datas(Loc - 1, 32)
 '数据移植至输出数组
 For i = 1 To Loc - 1
     For j = 0 To 32
-        If j = 28 Or j = 32 Then
-            datas(i, j) = 1
-        Else
-            datas(i, j) = dataArr(i, j)
-        End If
+        datas(i, j) = dataArr(i, j)
     Next
 Next
 '清除缓存
@@ -601,7 +601,7 @@ Dim bgCol As Integer
 
 Set wkSheet = ActiveWorkbook.Sheets(sheetName)
 rowNo = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
-ReDim dataArr(rowNo - 1, 12)
+ReDim dataArr(rowNo - 1, 14)
 
 If userType <> "B" And userType <> "M" And userType <> "L" And userType <> "E" Then
     MsgBox ("从" + sheetName + "载入数据出错！")
@@ -630,29 +630,35 @@ For i = 2 To rowNo
             dataArr(Loc, 7) = wkSheet.Cells(i, bgCol) '主胜率(初始值)
         End If
         If wkSheet.Cells(i, bgCol + 1) <> 0 Then
-        dataArr(Loc, 8) = wkSheet.Cells(i, bgCol + 1) '和率(初始值)
+            dataArr(Loc, 8) = wkSheet.Cells(i, bgCol + 1) '和率(初始值)
         End If
         If wkSheet.Cells(i, bgCol + 2) <> 0 Then
-        dataArr(Loc, 9) = wkSheet.Cells(i, bgCol + 2) '客胜率(初始值)
+            dataArr(Loc, 9) = wkSheet.Cells(i, bgCol + 2) '客胜率(初始值)
         End If
-        If wkSheet.Cells(i, bgCol + 4) <> 0 Then
-        dataArr(Loc, 10) = wkSheet.Cells(i, bgCol + 4) '主胜率（即时值)
-        End If
-        If wkSheet.Cells(i, bgCol + 5) <> 0 Then
-        dataArr(Loc, 11) = wkSheet.Cells(i, bgCol + 5) '和率（即时值)
-        End If
-        If wkSheet.Cells(i, bgCol + 6) <> 0 Then
-        dataArr(Loc, 12) = wkSheet.Cells(i, bgCol + 6) '客胜率（即时值)
+        If wkSheet.Cells(i, bgCol + 2) <> 0 Then
+            dataArr(Loc, 10) = wkSheet.Cells(i, bgCol + 3) '返还率(初始值)
         End If
         
+        If wkSheet.Cells(i, bgCol + 4) <> 0 Then
+            dataArr(Loc, 11) = wkSheet.Cells(i, bgCol + 4) '主胜率（即时值)
+        End If
+        If wkSheet.Cells(i, bgCol + 5) <> 0 Then
+            dataArr(Loc, 12) = wkSheet.Cells(i, bgCol + 5) '和率（即时值)
+        End If
+        If wkSheet.Cells(i, bgCol + 6) <> 0 Then
+            dataArr(Loc, 13) = wkSheet.Cells(i, bgCol + 6) '客胜率（即时值)
+        End If
+        If wkSheet.Cells(i, bgCol + 2) <> 0 Then
+            dataArr(Loc, 14) = wkSheet.Cells(i, bgCol + 7) '返还率(即时值)
+        End If
         Loc = Loc + 1
     End If
 Next
 
-ReDim datas(Loc - 1, 12)
+ReDim datas(Loc - 1, 14)
 '数据移植至输出数组
 For i = 1 To Loc - 1
-    For j = 0 To 12
+    For j = 0 To 14
         datas(i, j) = dataArr(i, j)
     Next
 Next

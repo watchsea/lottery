@@ -258,9 +258,9 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
           
           
           '记录比赛结果
-          If dataSheet.Cells(Loc, 10) = "" And dataW(i, 13) <> "" Then
-              dataSheet.Cells(Loc, 10) = dataW(i, 13)
-              dataSheet.Cells(Loc, 11) = 比赛结果(dataW(i, 13))
+          If dataSheet.Cells(Loc, 10) = "" And dataW(i, 15) <> "" Then
+              dataSheet.Cells(Loc, 10) = dataW(i, 15)
+              dataSheet.Cells(Loc, 11) = 比赛结果(dataW(i, 15))
               
               dataSheet.Cells(Loc + 1, 10) = dataSheet.Cells(Loc, 10)   '比分
               dataSheet.Cells(Loc + 1, 11) = dataSheet.Cells(Loc, 11)   '赛果
@@ -290,7 +290,7 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
           dataSheet.Cells(Loc + 2, 8) = dataSheet.Cells(Loc, 8) '赛季
           dataSheet.Cells(Loc + 2, 9) = dataSheet.Cells(Loc, 9)  '球赛ID
 
-          Call 记录初始值(dataSheet, dataW, Loc, dataWcol, i, 7, 10, True, False, "A", 3)
+          Call 记录初始值(dataSheet, dataW, Loc, dataWcol, i, 7, 11, True, False, "A", 4)
           
          '*******************************************************************
          '               竞彩网相关数据处理
@@ -448,7 +448,7 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
      If dataDict.exists(vsId) Then      '根据赛事ID号来进行匹配
          Loc = dataDict.Item(vsId)
          If dataSheet.Cells(Loc, dataBcol) = "" And dataSheet.Cells(Loc, dataBcol + 1) = "" And dataSheet.Cells(Loc, dataBcol + 2) = "" Then
-            Call 记录初始值(dataSheet, dataB, Loc, dataBcol, k, 7, 10, True, False, "A", 3)
+            Call 记录初始值(dataSheet, dataB, Loc, dataBcol, k, 7, 11, True, False, "A", 4)
          End If
      End If
  Next
@@ -460,7 +460,7 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
      If dataDict.exists(vsId) Then      '根据赛事ID号来进行匹配
          Loc = dataDict.Item(vsId)
          If dataSheet.Cells(Loc, dataMcol) = "" And dataSheet.Cells(Loc, dataMcol + 1) = "" And dataSheet.Cells(Loc, dataMcol + 2) = "" Then
-            Call 记录初始值(dataSheet, dataM, Loc, dataMcol, k, 7, 10, True, False, "A", 3)
+            Call 记录初始值(dataSheet, dataM, Loc, dataMcol, k, 7, 11, True, False, "A", 4)
         End If
      End If
  Next
@@ -472,7 +472,7 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
      If dataDict.exists(vsId) Then      '根据赛事ID号来进行匹配
         Loc = dataDict.Item(vsId)
         If dataSheet.Cells(Loc, dataLcol) = "" And dataSheet.Cells(Loc, dataLcol + 1) = "" And dataSheet.Cells(Loc, dataLcol + 2) = "" Then
-            Call 记录初始值(dataSheet, dataL, Loc, dataLcol, k, 7, 10, True, False, "A", 3)
+            Call 记录初始值(dataSheet, dataL, Loc, dataLcol, k, 7, 11, True, False, "A", 4)
         End If
      End If
  Next
@@ -484,7 +484,7 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
      If dataDict.exists(vsId) Then      '根据赛事ID号来进行匹配
          Loc = dataDict.Item(vsId)
          If dataSheet.Cells(Loc, dataEcol) = "" And dataSheet.Cells(Loc, dataEcol + 1) = "" And dataSheet.Cells(Loc, dataEcol + 2) = "" Then
-            Call 记录初始值(dataSheet, dataE, Loc, dataEcol, k, 7, 10, True, False, "A", 3)
+            Call 记录初始值(dataSheet, dataE, Loc, dataEcol, k, 7, 11, True, False, "A", 4)
          End If
      End If
  Next
@@ -497,10 +497,10 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
      If dataDict.exists(vsId) Then      '根据赛事ID号来进行匹配
          Loc = dataDict.Item(vsId)
          If dataSheet.Cells(Loc, LOSE1col) = "" And dataSheet.Cells(Loc, LOSE1col + 1) = "" And dataSheet.Cells(Loc, LOSE1col + 2) = "" Then
-            Call 记录初始值(dataSheet, dataL12, Loc, LOSE1col, k, 1, 5, False, False, "A", 3) '平均赔率1
+            Call 记录初始值(dataSheet, dataL12, Loc, LOSE1col, k, 1, 5, False, False, "A", 4) '平均赔率1
          End If
          If dataSheet.Cells(Loc, lose2Col) = "" And dataSheet.Cells(Loc, lose2Col + 1) = "" And dataSheet.Cells(Loc, lose2Col + 2) = "" Then
-            Call 记录初始值(dataSheet, dataL12, Loc, lose2Col, k, 9, 13, False, False, "A", 3) '平均赔率2
+            Call 记录初始值(dataSheet, dataL12, Loc, lose2Col, k, 9, 13, False, False, "A", 4) '平均赔率2
          End If
          If dataSheet.Cells(Loc, BF1Col) = "" And dataSheet.Cells(Loc, BF1Col + 1) = "" And dataSheet.Cells(Loc, BF1Col + 2) = "" Then
             Call 记录初始值(dataSheet, dataL12, Loc, BF1Col, k, 25, 29, True, True, "D", 4)  'BF1
@@ -781,10 +781,10 @@ Do While j <= tloc
                 Next
                 
                 If k <= UBound(dataW) Then
-                    Call 记录即时值(dataSheet, dataW, Loc, dataWcol, k, 7, 10, False, "A", 3)
-                    If dataSheet.Cells(Loc - 2, 10) = "" And dataW(k, 13) <> "" Then
-                        dataSheet.Cells(Loc - 2, 10) = dataW(k, 13)
-                        dataSheet.Cells(Loc - 2, 11) = 比赛结果(dataW(k, 13))
+                    Call 记录即时值(dataSheet, dataW, Loc, dataWcol, k, 7, 11, False, "A", 4)
+                    If dataSheet.Cells(Loc - 2, 10) = "" And dataW(k, 15) <> "" Then
+                        dataSheet.Cells(Loc - 2, 10) = dataW(k, 15)
+                        dataSheet.Cells(Loc - 2, 11) = 比赛结果(dataW(k, 15))
                         
                         dataSheet.Cells(Loc - 1, 10) = dataSheet.Cells(Loc - 2, 10) '比分
                         dataSheet.Cells(Loc - 1, 11) = dataSheet.Cells(Loc - 2, 11) '赛果
@@ -806,7 +806,7 @@ Do While j <= tloc
                 Next
     
                 If k <= UBound(dataB) Then
-                    Call 记录即时值(dataSheet, dataB, Loc, dataBcol, k, 7, 10, False, "A", 3)
+                    Call 记录即时值(dataSheet, dataB, Loc, dataBcol, k, 7, 11, False, "A", 4)
                 End If
             End If
         End If
@@ -822,7 +822,7 @@ Do While j <= tloc
                 Next
                 
                  If k <= UBound(dataM) Then
-                    Call 记录即时值(dataSheet, dataM, Loc, dataMcol, k, 7, 10, False, "A", 3)
+                    Call 记录即时值(dataSheet, dataM, Loc, dataMcol, k, 7, 11, False, "A", 4)
                 End If
             End If
         End If
@@ -839,7 +839,7 @@ Do While j <= tloc
                 Next
                 
                  If k <= UBound(dataL) Then
-                    Call 记录即时值(dataSheet, dataL, Loc, dataLcol, k, 7, 10, False, "A", 3)
+                    Call 记录即时值(dataSheet, dataL, Loc, dataLcol, k, 7, 11, False, "A", 4)
                 End If
             End If
         End If
@@ -856,7 +856,7 @@ Do While j <= tloc
                 Next
                 
                  If k <= UBound(dataE) Then
-                    Call 记录即时值(dataSheet, dataE, Loc, dataEcol, k, 7, 10, False, "A", 3)
+                    Call 记录即时值(dataSheet, dataE, Loc, dataEcol, k, 7, 11, False, "A", 4)
                 End If
             
             End If
@@ -949,7 +949,7 @@ Do While j <= tloc
                   Next
                   
                   If k <= UBound(dataL12) Then
-                      Call 记录即时值(dataSheet, dataL12, Loc, LOSE1col, k, 1, 5, False, "A", 3)
+                      Call 记录即时值(dataSheet, dataL12, Loc, LOSE1col, k, 1, 5, False, "A", 4)
                   End If
         
                   
@@ -961,7 +961,7 @@ Do While j <= tloc
                   Next
                   
                   If k <= UBound(dataL12) Then
-                      Call 记录即时值(dataSheet, dataL12, Loc, lose2Col, k, 9, 13, False, "A", 3)
+                      Call 记录即时值(dataSheet, dataL12, Loc, lose2Col, k, 9, 13, False, "A", 4)
                   End If
                   
                   
@@ -1515,7 +1515,7 @@ For i = 0 To UBound(data)
         
         '更正赔2的初始值的“比较”栏目的值
         If dataSheet.Cells(j, lose2Col) <> "" And dataSheet.Cells(j, lose2Col + 1) <> "" And dataSheet.Cells(j, lose2Col + 2) <> "" Then
-            dataSheet.Cells(j, lose2Col + 3) = 横向比较(dataSheet, j, lose2Col + 3, lose2Col - LOSE1col, "A", 1)
+            dataSheet.Cells(j, lose2Col + 4) = 横向比较(dataSheet, j, lose2Col + 3, lose2Col - LOSE1col, "A", 1)
         End If
         
         '计算bf1的初始值的"比较"栏数据
@@ -1569,24 +1569,24 @@ For i = 0 To UBound(data)
 
         
         '威廉数据列转行
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 3, 1, "DATAW_1", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 3, 2, "DATAW_2", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 3, 3, "DATAW_3", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 4, 1, "DATAW_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 4, 2, "DATAW_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAW", 1, 4, 3, "DATAW_3", 1)
         
         
         '-----------------------------------------
         'add end  2018.8.13
         '-----------------------------------------
         'Bet365数据列转行
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 3, 1, "DATAB_1", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 3, 2, "DATAB_2", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 3, 3, "DATAB_3", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 4, 1, "DATAB_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 4, 2, "DATAB_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAB", 1, 4, 3, "DATAB_3", 1)
         
         
         '澳门彩票数据列转行
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 3, 1, "DATAM_1", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 3, 2, "DATAM_2", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 3, 3, "DATAM_3", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 4, 1, "DATAM_1", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 4, 2, "DATAM_2", 1)
+        Call 通用列转行(dataSheet, j, dataColDict, "DATAM", 1, 4, 3, "DATAM_3", 1)
         
         
         '赔1数据列转行
@@ -1600,10 +1600,6 @@ For i = 0 To UBound(data)
         Call 通用列转行(dataSheet, j, dataColDict, "LOSE2", 1, 3, 2, "LOSE2_2", 1)
         Call 通用列转行(dataSheet, j, dataColDict, "LOSE2", 1, 3, 3, "LOSE2_3", 1)
         
-        '99家平均比例数据列转行
-        Call 通用列转行(dataSheet, j, dataColDict, "99AVGRATIO", 1, 3, 1, "99AVGRATIO_1", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "99AVGRATIO", 1, 3, 2, "99AVGRATIO_2", 1)
-        Call 通用列转行(dataSheet, j, dataColDict, "99AVGRATIO", 1, 3, 3, "99AVGRATIO_3", 1)
         '----------------------------------------
         'add begin 2018.8.27
         '----------------------------------------
