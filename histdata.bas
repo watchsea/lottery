@@ -96,7 +96,7 @@ Do While calDate <= enddate
       Do Until .ReadyState = 4
         DoEvents
       Loop
-      Set doc = .Document
+      Set doc = .document
     End With
     'Application.ScreenUpdating = False
     
@@ -301,7 +301,7 @@ dt = begindate
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
     Loop
-    Set doc = WebBrowser1.Document
+    Set doc = WebBrowser1.document
     Set tbody = doc.getElementsbyTagName("div")
     
     
@@ -332,12 +332,10 @@ dt = begindate
         End If
     Next
     
-    '处理第一页数据
+    '预处理第一页数据，获取相关参数数据
     If pageCnt > 0 Then
         '标识，期数，联赛，日期，时间，主队，比分，客队，必发赔率(主胜、平局、客胜）、99家平均
         ReDim data(recCnt, 47)
-        rowcnt = 1
-        rowcnt = 规范澳客网必发盈亏数据(doc, rowcnt, data, dt)
         
         '处理后续网页的参数
         '球队
@@ -386,9 +384,14 @@ dt = begindate
         
     End If
     
-    '处理剩余页面的数据
+    '处理所有页面的数据，2019.12.2此处略作调整，由于页面默认是查看未结束的页面，而在实际中需要取已结束的球队数据
+    '因而对第一页需读取两次。
     errorinfo = ""
-    For i = 2 To pageCnt
+    rowcnt = 1
+    
+    i = 1
+    Do
+    'For i = 1 To pageCnt
         Sleep 500 * Round(Rnd, 2) + 500 * Round(Rnd, 2) + 1000 * Round(Rnd, 3)
         
         
@@ -408,12 +411,41 @@ dt = begindate
             DoEvents
         Loop
         If WebBrowser1.ReadyState = 4 Then
-            Set doc = WebBrowser1.Document
+            Set doc = WebBrowser1.document
+            
+            If i = 1 Then   '重新取一次页码数据
+                Set tbody = doc.getElementsbyTagName("div")
+                For Each ucell In tbody
+                    If ucell.className = "pagination" Then    '获取页数信息
+                        'MsgBox ("页码")
+                        If ucell.innerText = "暂时没有添加记录" Then   '没有内容，则执行下一天
+                            recCnt = 0
+                            pageCnt = 0
+                            Exit For
+                        End If
+                        
+                        txt = Split(ucell.innerText, "页首页上一页")(0)
+                         txt1 = Split(txt, "条记录共")
+                         pageCnt = txt1(1)
+                         recCnt = Split(txt1(0), "共有")(1)
+                         Exit For
+                    End If
+                Next
+                ReDim data(recCnt, 47)
+            End If
+            
             '处理相关资料
             rowcnt = 规范澳客网必发盈亏数据(doc, rowcnt, data, dt)
+            
+            
         End If
         
-    Next i
+        
+    'Next i
+    i = i + 1
+    Loop While i <= pageCnt
+    
+    
     If errorinfo <> "" Then
         MsgBox ("必发赢亏数据加载失败的页数包括(" & errorinfo & ")")
     End If
@@ -583,7 +615,7 @@ dt = begindate
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
     Loop
-    Set doc = WebBrowser1.Document
+    Set doc = WebBrowser1.document
     
     Set divObjects = doc.body.All.tags("TABLE")
     For i = 0 To divObjects.Length - 1
@@ -710,7 +742,7 @@ dt = begindate
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
     Loop
-    Set doc = WebBrowser1.Document
+    Set doc = WebBrowser1.document
     Set tbody = doc.getElementsbyTagName("div")
 
 
@@ -743,8 +775,7 @@ dt = begindate
     If pageCnt > 0 Then
         '标识，期数，联赛，日期，时间，主队，比分，客队，必发赔率(主胜、平局、客胜）、99家平均
         ReDim data(recCnt, 23)
-        rowcnt = 1
-        rowcnt = 规范澳客网凯利指数(doc, rowcnt, data, dt)
+        
         
         '处理后续页面的参数
         postData = "LeagueID="
@@ -796,7 +827,10 @@ dt = begindate
 
     '处理剩余页面的数据
     errorinfo = ""
-    For i = 2 To pageCnt
+    rowcnt = 1
+    i = 1
+    Do
+    'For i = 1 To pageCnt
         Sleep 500 * Round(Rnd, 2) + 500 * Round(Rnd, 2) + 1000 * Round(Rnd, 3)
         
         URL = "http://www.okooo.com/danchang/shuju/peilv?" & postData & i
@@ -813,11 +847,34 @@ dt = begindate
             DoEvents
         Loop
         If WebBrowser1.ReadyState = 4 Then
-            Set doc = WebBrowser1.Document
+            Set doc = WebBrowser1.document
+            If i = 1 Then   '重新取一次页码数据
+                Set tbody = doc.getElementsbyTagName("div")
+                For Each ucell In tbody
+                    If ucell.className = "pagination" Then    '获取页数信息
+                        'MsgBox ("页码")
+                        If ucell.innerText = "暂时没有添加记录" Then   '没有内容，则执行下一天
+                            recCnt = 0
+                            pageCnt = 0
+                            Exit For
+                        End If
+                        
+                        txt = Split(ucell.innerText, "页首页上一页")(0)
+                         txt1 = Split(txt, "条记录共")
+                         pageCnt = txt1(1)
+                         recCnt = Split(txt1(0), "共有")(1)
+                         Exit For
+                    End If
+                Next
+                ReDim data(recCnt, 23)
+            End If
             '处理相关资料
             rowcnt = 规范澳客网凯利指数(doc, rowcnt, data, dt)
         End If
-    Next i
+    'Next i
+    i = i + 1
+    Loop While i <= pageCnt
+    
     
     If errorinfo <> "" Then
         MsgBox ("凯利指数数据加载失败的页数包括(" & errorinfo & ")")
@@ -1039,7 +1096,7 @@ dt = begindate
     Do Until WebBrowser1.ReadyState = 4
         DoEvents
     Loop
-    Set doc = WebBrowser1.Document
+    Set doc = WebBrowser1.document
     Set tbody = doc.getElementsbyTagName("div")
 
     '***********************************************
@@ -1070,8 +1127,6 @@ dt = begindate
     If pageCnt > 0 Then
         '标识，期数，联赛，日期，时间，主队，比分，客队，必发赔率(主胜、平局、客胜）、99家平均
         ReDim data(recCnt, 49)
-        rowcnt = 1
-        rowcnt = 规范澳客网盘口评测(doc, rowcnt, data, dt)
         '球队
         
         postData = "LeagueID="
@@ -1124,7 +1179,10 @@ dt = begindate
 
     '处理剩余页面的数据
     errorinfo = ""
-    For i = 2 To pageCnt
+    rowcnt = 1
+    i = 1
+    Do
+    'For i = 1 To pageCnt
         Sleep 500 * Round(Rnd, 2) + 500 * Round(Rnd, 2) + 1000 * Round(Rnd, 3)
         
         URL = "http://www.okooo.com/danchang/shuju/pankou?" & postData & i
@@ -1141,11 +1199,33 @@ dt = begindate
             DoEvents
         Loop
         If WebBrowser1.ReadyState = 4 Then
-            Set doc = WebBrowser1.Document
+            Set doc = WebBrowser1.document
+            If i = 1 Then   '重新取一次页码数据
+                Set tbody = doc.getElementsbyTagName("div")
+                For Each ucell In tbody
+                    If ucell.className = "pagination" Then    '获取页数信息
+                        'MsgBox ("页码")
+                        If ucell.innerText = "暂时没有添加记录" Then   '没有内容，则执行下一天
+                            recCnt = 0
+                            pageCnt = 0
+                            Exit For
+                        End If
+                        
+                        txt = Split(ucell.innerText, "页首页上一页")(0)
+                         txt1 = Split(txt, "条记录共")
+                         pageCnt = txt1(1)
+                         recCnt = Split(txt1(0), "共有")(1)
+                         Exit For
+                    End If
+                Next
+                ReDim data(recCnt, 49)
+            End If
             '处理相关资料
             rowcnt = 规范澳客网盘口评测(doc, rowcnt, data, dt)
         End If
-    Next i
+    'Next i
+    i = i + 1
+    Loop While i <= pageCnt
     
     If errorinfo <> "" Then
         MsgBox ("盘口评测数据加载失败的页数包括(" & errorinfo & ")")
