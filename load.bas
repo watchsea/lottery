@@ -202,6 +202,8 @@ Dim league
 '取对应关系数据
 Call loadLeagueData(leagueData)
 
+Call 初始化字典(teamUniDict, "02球队", 2, 1, 2)
+
 Set wkSheet = ActiveWorkbook.Sheets(sheetName)
 cnt = wkSheet.Cells(1, 1)
 ReDim dataArr(cnt - 1, 14)
@@ -216,8 +218,8 @@ For i = 1 To cnt - 1
             dataArr(Loc, 1) = league '联赛
             dataArr(Loc, 2) = wkSheet.Cells(i + 1, 5) '日期
             dataArr(Loc, 3) = CDate(wkSheet.Cells(i + 1, 6))  '时间
-            dataArr(Loc, 4) = Trim(wkSheet.Cells(i + 1, 7))  '主队
-            dataArr(Loc, 5) = Trim(wkSheet.Cells(i + 1, 9))  '客队
+            dataArr(Loc, 4) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 7))) '主队
+            dataArr(Loc, 5) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 9)))  '客队
             dataArr(Loc, 6) = Trim(wkSheet.Cells(i + 1, 8))  '对阵
             dataArr(Loc, 7) = wkSheet.Cells(i + 1, 10) '主胜率(初始值)
             dataArr(Loc, 8) = wkSheet.Cells(i + 1, 11) '和率(初始值)
@@ -271,6 +273,7 @@ Dim tempData
 
 '取对应关系数据
 Call loadLeagueData(leagueData)
+Call 初始化字典(teamUniDict, "02球队", 2, 1, 2)
 
 
 Set wkSheet = ActiveWorkbook.Sheets(sheetName)
@@ -286,8 +289,8 @@ For i = 1 To cnt - 1
         dataArr(Loc, 1) = team '联赛
         dataArr(Loc, 2) = wkSheet.Cells(i + 1, 5) '日期
         dataArr(Loc, 3) = CDate(wkSheet.Cells(i + 1, 6)) '时间
-        dataArr(Loc, 4) = Trim(wkSheet.Cells(i + 1, 7))  '主队
-        dataArr(Loc, 5) = Trim(wkSheet.Cells(i + 1, 9))  '客队
+        dataArr(Loc, 4) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 7)))  '主队
+        dataArr(Loc, 5) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 9)))  '客队
         dataArr(Loc, 6) = Trim(wkSheet.Cells(i + 1, 8))  '对阵
         
         '威廉希尔
@@ -350,6 +353,7 @@ Dim amount3 As Double   '负成交金额
 
 '取对应关系数据
 Call loadLeagueData(leagueData)
+Call 初始化字典(teamUniDict, "02球队", 2, 1, 2)
 
 Set wkSheet = ActiveWorkbook.Sheets(sheetName)
 cnt = wkSheet.Cells(1, 1)
@@ -365,8 +369,8 @@ For i = 1 To cnt - 1
         dataArr(Loc, 1) = team '联赛
         dataArr(Loc, 2) = wkSheet.Cells(i + 1, 5) '日期
         dataArr(Loc, 3) = CDate(wkSheet.Cells(i + 1, 6)) '时间
-        dataArr(Loc, 4) = Trim(wkSheet.Cells(i + 1, 7))  '主队
-        dataArr(Loc, 5) = Trim(wkSheet.Cells(i + 1, 9))  '客队
+        dataArr(Loc, 4) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 7)))  '主队
+        dataArr(Loc, 5) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 9)))  '客队
         dataArr(Loc, 6) = Trim(wkSheet.Cells(i + 1, 8))  '比分：未开始的为“VS”，结束的为实际比分
         dataArr(Loc, 7) = wkSheet.Cells(i + 1, 1)  '当期期数
         dataArr(Loc, 8) = wkSheet.Cells(i + 1, 3)  '当期编号
@@ -448,6 +452,8 @@ Dim league
 
 '取对应关系数据
 Call loadLeagueData(leagueData)
+Call 初始化字典(teamUniDict, "02球队", 2, 1, 2)
+
 
 Set wkSheet = ActiveWorkbook.Sheets(sheetName)
 cnt = wkSheet.Cells(1, 1)
@@ -461,8 +467,8 @@ For i = 1 To cnt - 1
         dataArr(Loc, 1) = team '联赛
         dataArr(Loc, 2) = CDate(wkSheet.Cells(i + 1, 5)) '日期
         dataArr(Loc, 3) = CDate(wkSheet.Cells(i + 1, 6)) '时间
-        dataArr(Loc, 4) = Trim(wkSheet.Cells(i + 1, 7))  '主队
-        dataArr(Loc, 5) = Trim(wkSheet.Cells(i + 1, 9))  '客队
+        dataArr(Loc, 4) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 7)))  '主队
+        dataArr(Loc, 5) = UniformTeam(teamUniDict, Trim(wkSheet.Cells(i + 1, 9)))  '客队
         dataArr(Loc, 6) = Trim(wkSheet.Cells(i + 1, 8))  '比分：未开始的为“VS”，结束的为实际比分
         
         
@@ -716,7 +722,7 @@ With IE
   Do Until .ReadyState = 4
     DoEvents
   Loop
-  Set doc = .Document
+  Set doc = .document
 End With
 Application.ScreenUpdating = False
 
@@ -753,7 +759,7 @@ For k = 0 To len1 - 1
       Do Until .ReadyState = 4
         DoEvents
       Loop
-      Set doc = .Document
+      Set doc = .document
     End With
     Application.ScreenUpdating = False
     

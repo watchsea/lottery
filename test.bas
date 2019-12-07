@@ -1,6 +1,6 @@
 ﻿Attribute VB_Name = "test"
 Sub 程序升级()
-    Call 程序升级20180827
+    Call 程序升级20190907
 End Sub
 Sub 程序升级20180715()
 
@@ -530,6 +530,82 @@ End Sub
 
 
 
+Sub 程序升级20190907()
+
+    Dim sheet1 As Worksheet
+    Dim tmClBgCol As Long       '等处理数据所在列
+    Dim colDesp
+    Dim colIndex
+    Dim insertColIdx
+
+    Set sheet1 = ActiveWorkbook.Sheets("综合数据")
+    Call 初始化一般字典(dataColDict, sheet1, 4, 0, 1, False)
+    
+    '数据按从后往前的顺序排列。这样有效的利用现有的字典中列的值。
+    
+     '删除99家平均，即时值二，即时值一、初始值
+    colIndex = Split("99AVGRATIO_1,99AVGRATIO_2,99AVGRATIO_3", ",")
+    For i = 0 To UBound(colIndex)
+        
+        i2 = dataColDict.Item(colIndex(i))
+        If i2 > 0 Then
+            sheet1.Cells.Columns(i2).Delete
+            sheet1.Cells.Columns(i2).Delete
+            sheet1.Cells.Columns(i2).Delete
+            Call 初始化一般字典(dataColDict, sheet1, 4, 0, 1, False)
+        End If
+        
+    Next
+    
+    '删除竞彩比例四项
+    
+    i2 = dataColDict.Item("CMPRATIO")
+    If i2 > 0 Then
+        sheet1.Cells.Columns(i2).Delete
+        sheet1.Cells.Columns(i2).Delete
+        sheet1.Cells.Columns(i2).Delete
+        sheet1.Cells.Columns(i2).Delete
+        Call 初始化一般字典(dataColDict, sheet1, 4, 0, 1, False)
+    End If
+   
+    
+    
+    colDesp = Split("99家平均,澳门,Bet365", ",")
+    colIndex = Split("DATAW,DATAW_1,DATAW_2,DATAW_3,DATAB,DATAB_1,DATAB_2,DATAB_3,DATAM,DATAM_1,DATAM_2,DATAM_3,DATAL,DATAE,LOSE1,LOSE2", ",")
+    insertColIdx = Split("DATAW_1,DATAW_2,DATAW_3,DATAB,DATAB_1,DATAB_2,DATAB_3,DATAM,DATAM_1,DATAM_2,DATAM_3,DATAJ,DATAE,LOSE1,LOSE2,LOSE1_1", ",")
+    colCnt = Split("4,3,3,3,4,3,3,3,4,3,3,3,4,4,4,4", ",")
+    If UBound(colCnt) <> UBound(colIndex) Or UBound(colIndex) <> UBound(insertColIdx) Then
+        MsgBox ("升级失败！")
+        Exit Sub
+    End If
+    
+    For i = 0 To UBound(colIndex)
+         i2 = dataColDict.Item(colIndex(i))
+    
+        If i2 > 0 Then
+            tmClBgCol = dataColDict.Item(insertColIdx(i))
+            i3 = Int(colCnt(i))
+            
+            If tmClBgCol - i2 = i3 And i3 >= 3 Then '还没有增加列
+            
+                sheet1.Cells.Columns(i2 + 3).Insert
+        
+                sheet1.Cells(3, i2 + 3) = "返还率"
+                If i3 = 3 Then   '
+                    sheet1.Range(Cells(2, i2), Cells(2, i2 + 3)).Merge
+                End If
+                sheet1.Range(Cells(2, i2), Cells(3, i2 + 3)).Borders.LineStyle = 1
+                Call 初始化一般字典(dataColDict, sheet1, 4, 0, 1, False)
+            
+                MsgBox (colIndex(i) & "-分析程序更新完毕！")
+            End If
+        Else
+            MsgBox (colIndex(i) & "-分析程序已更新！")
+        End If
+    Next
+    
+    MsgBox ("全部更新完毕！")
+End Sub
 
 Sub 澳客网数据导入()
 Dim begindate As Date
@@ -538,10 +614,10 @@ Dim enddate As Date
     begindate = DateAdd("d", -1, Date)
     enddate = DateAdd("d", 2, Date)
     
-    'Call 澳客网必发盈亏(begindate, enddate)
+    Call 澳客网必发盈亏(begindate, enddate)
     'Call 澳客网胜负指数(begindate, enddate)
     'Call 澳客网盘口评测(begindate, enddate)
-    Call 澳客网凯利指数(begindate, enddate)
+    'Call 澳客网凯利指数(begindate, enddate)
     'Call 澳客网数据载入
     MsgBox ("导入完毕！")
 End Sub

@@ -242,6 +242,20 @@ End If
 
 End Function
 
+
+
+Function UniformTeam(teamDict, team)
+'统一球队名称，以便匹配数据
+'teamDict ：球队转换字典，将澳客网的球队统一到球探网的名称
+'team：澳客网球队
+If teamDict.exists(team) Then
+    UniformTeam = teamDict.Item(team)
+Else
+    UniformTeam = team
+End If
+
+End Function
+
 Sub loadLeagueData(leagueData())
 '取各网站联赛名称对应关系数据
 

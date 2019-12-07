@@ -2,6 +2,7 @@
 Public Dict As Object   '数据参数字典
 Public leagueDict As Object   '联赛字典
 Public dataColDict As Object '数据存放位置字典
+Public teamUniDict As Object   '球队统一字典
 
 
 Sub 初始化一般字典(tempDict As Object, paraSheet As Worksheet, idCol As Long, valCol As Long, Optional bgRow As Long = 1, Optional ColOrRow As Boolean = True)

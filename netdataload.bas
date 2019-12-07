@@ -536,7 +536,7 @@ With IE
   Do Until .ReadyState = 4
     DoEvents
   Loop
-  Set doc = .Document
+  Set doc = .document
 End With
 'Application.ScreenUpdating = False
 
@@ -765,7 +765,7 @@ With IE
   Do Until .ReadyState = 4
     DoEvents
   Loop
-  Set doc = .Document
+  Set doc = .document
 End With
 'Application.ScreenUpdating = False
 ReDim dataAvg(103)   '0-43,主队积分信息，44-87：客队积分信息，
