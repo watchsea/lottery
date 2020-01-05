@@ -1,7 +1,7 @@
 ﻿Attribute VB_Name = "silimar"
 Option Explicit
 
-Sub 相同赔率比较()
+Sub 相同赔率比较(ByRef control As Office.IRibbonControl)
 '此模块主要是处理相同赔率的数据比较
 '
 '

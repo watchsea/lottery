@@ -1,5 +1,5 @@
 ﻿Attribute VB_Name = "test"
-Sub 程序升级()
+Sub 程序升级(ByRef control As Office.IRibbonControl)
     Call 程序升级20190907
 End Sub
 Sub 程序升级20180715()
@@ -620,4 +620,9 @@ Dim enddate As Date
     'Call 澳客网凯利指数(begindate, enddate)
     'Call 澳客网数据载入
     MsgBox ("导入完毕！")
+End Sub
+
+Sub 测试积分数据导入()
+    Call 初始化字典(leagueDict, "01赛事")
+    Call 球探网赛事积分数据载入
 End Sub

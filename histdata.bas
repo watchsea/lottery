@@ -6,7 +6,7 @@ Option Explicit
     Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 #End If
 
-Sub 历史数据加载()
+Sub 历史数据加载(ByRef control As Office.IRibbonControl)
     Dim begindate As Date
     Dim enddate As Date
     
@@ -106,7 +106,7 @@ Do While calDate <= enddate
         Set wkSheet = Nothing
         Exit Function
     End If
-    Set tt = doc.getElementById("table_schedule").getElementsbyTagName("tr")
+    Set tt = doc.getElementById("table_schedule").getElementsByTagName("tr")
     rowcnt = tt.Length - 1
     colCnt = tt(0).Cells.Length - 1
     col = 0
@@ -302,7 +302,7 @@ dt = begindate
         DoEvents
     Loop
     Set doc = WebBrowser1.document
-    Set tbody = doc.getElementsbyTagName("div")
+    Set tbody = doc.getElementsByTagName("div")
     
     
     '***********************************************
@@ -340,7 +340,7 @@ dt = begindate
         '处理后续网页的参数
         '球队
         postData = "LeagueID="
-        Set oDoc = doc.getElementById("csfilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("csfilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -353,7 +353,7 @@ dt = begindate
         Next
         '让球数据
         postData = postData & "&HandicapNumber="
-        Set oDoc = doc.getElementById("rqfilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("rqfilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -367,7 +367,7 @@ dt = begindate
         
         '数据
         postData = postData & "&BetDate="
-        Set oDoc = doc.getElementById("datafilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("datafilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -414,7 +414,7 @@ dt = begindate
             Set doc = WebBrowser1.document
             
             If i = 1 Then   '重新取一次页码数据
-                Set tbody = doc.getElementsbyTagName("div")
+                Set tbody = doc.getElementsByTagName("div")
                 For Each ucell In tbody
                     If ucell.className = "pagination" Then    '获取页数信息
                         'MsgBox ("页码")
@@ -504,7 +504,11 @@ Dim Loc As Integer
                 BFarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
                 BFarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
                 tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-                BFarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)    '日期
+                If DatePart("m", pDt) = 12 And Split(tt(0), "-")(0) = "01" Then
+                    BFarr(Loc, 4) = CStr(DatePart("yyyy", pDt) + 1) & "-" & tt(0)  '日期
+                Else
+                    BFarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0)    '日期
+                End If
                 BFarr(Loc, 5) = tt(1)     '时间
                 For j = 0 To BasicInfo(1).ChildNodes.Length - 1
                     If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
@@ -628,7 +632,13 @@ dt = begindate
                 wkSheet.Cells(Loc, 3) = Right(Klinfo(j).Cells(0).innerText, 3)    '编号
                 wkSheet.Cells(Loc, 4) = Klinfo(j).Cells(1).innerText     '联赛
                 tt = Split(Klinfo(j).Cells(2).innerText, " ")
-                wkSheet.Cells(Loc, 5) = CStr(DatePart("yyyy", dt)) & "-" & tt(0)    '日期
+                If DatePart("m", pDt) = 12 And Split(tt(0), "-")(0) = "01" Then
+                    wkSheet.Cells(Loc, 5) = CStr(DatePart("yyyy", dt) + 1) & "-" & tt(0)  '日期
+                Else
+                    wkSheet.Cells(Loc, 5) = CStr(DatePart("yyyy", dt)) & "-" & tt(0)    '日期
+                End If
+                
+                
                 wkSheet.Cells(Loc, 6) = tt(1)     '时间
                 
                 
@@ -743,7 +753,7 @@ dt = begindate
         DoEvents
     Loop
     Set doc = WebBrowser1.document
-    Set tbody = doc.getElementsbyTagName("div")
+    Set tbody = doc.getElementsByTagName("div")
 
 
     '***********************************************
@@ -779,7 +789,7 @@ dt = begindate
         
         '处理后续页面的参数
         postData = "LeagueID="
-        Set oDoc = doc.getElementById("csfilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("csfilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -792,7 +802,7 @@ dt = begindate
         Next
         '让球数据
         postData = postData & "&HandicapNumber="
-        Set oDoc = doc.getElementById("rqfilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("rqfilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -806,7 +816,7 @@ dt = begindate
         
         '数据
         postData = postData & "&BetDate="
-        Set oDoc = doc.getElementById("datafilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("datafilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -849,7 +859,7 @@ dt = begindate
         If WebBrowser1.ReadyState = 4 Then
             Set doc = WebBrowser1.document
             If i = 1 Then   '重新取一次页码数据
-                Set tbody = doc.getElementsbyTagName("div")
+                Set tbody = doc.getElementsByTagName("div")
                 For Each ucell In tbody
                     If ucell.className = "pagination" Then    '获取页数信息
                         'MsgBox ("页码")
@@ -932,7 +942,13 @@ Dim Loc As Integer
                   KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
                   KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
                   tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-                  KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                  
+                  If DatePart("m", pDt) = 12 And Split(tt(0), "-")(0) = "01" Then
+                    KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt) + 1) & "-" & tt(0)  '日期
+                  Else
+                    KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                  End If
+                  
                   KLarr(Loc, 5) = tt(1)     '时间
                   For j = 0 To BasicInfo(1).ChildNodes.Length - 1
                       If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then
@@ -1097,7 +1113,7 @@ dt = begindate
         DoEvents
     Loop
     Set doc = WebBrowser1.document
-    Set tbody = doc.getElementsbyTagName("div")
+    Set tbody = doc.getElementsByTagName("div")
 
     '***********************************************
     '   由于在实际的页面访问中会出现500错误
@@ -1130,7 +1146,7 @@ dt = begindate
         '球队
         
         postData = "LeagueID="
-        Set oDoc = doc.getElementById("csfilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("csfilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -1143,7 +1159,7 @@ dt = begindate
         Next
         '让球数据
         postData = postData & "&HandicapNumber="
-        Set oDoc = doc.getElementById("rqfilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("rqfilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -1157,7 +1173,7 @@ dt = begindate
         
         '数据
         postData = postData & "&BetDate="
-        Set oDoc = doc.getElementById("datafilter").getElementsbyTagName("input")
+        Set oDoc = doc.getElementById("datafilter").getElementsByTagName("input")
         k = 0
         For Each ucell In oDoc
             If ucell.Checked = True Then
@@ -1201,7 +1217,7 @@ dt = begindate
         If WebBrowser1.ReadyState = 4 Then
             Set doc = WebBrowser1.document
             If i = 1 Then   '重新取一次页码数据
-                Set tbody = doc.getElementsbyTagName("div")
+                Set tbody = doc.getElementsByTagName("div")
                 For Each ucell In tbody
                     If ucell.className = "pagination" Then    '获取页数信息
                         'MsgBox ("页码")
@@ -1283,7 +1299,11 @@ Dim Loc As Integer
                 KLarr(Loc, 2) = Right(BasicInfo(0).ChildNodes(0).innerText, 3)    '期数
                 KLarr(Loc, 3) = BasicInfo(0).ChildNodes(1).innerText     '联赛
                 tt = Split(BasicInfo(0).ChildNodes(2).innerText, " ")
-                KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                If DatePart("m", pDt) = 12 And Split(tt(0), "-")(0) = "01" Then
+                  KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt) + 1) & "-" & tt(0)  '日期
+                Else
+                  KLarr(Loc, 4) = CStr(DatePart("yyyy", pDt)) & "-" & tt(0) '日期
+                End If
                 KLarr(Loc, 5) = tt(1)     '时间
                 For j = 0 To BasicInfo(1).ChildNodes.Length - 1
                     If "SPAN" = BasicInfo(1).ChildNodes(j).nodename Then

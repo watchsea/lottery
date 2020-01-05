@@ -1,5 +1,5 @@
 ﻿Attribute VB_Name = "dataview"
-Sub 查看当期数据()
+Sub 查看当期数据(ByRef control As Office.IRibbonControl)
     Dim wkSheet As Worksheet
     Dim pasteSheet As Worksheet
     Dim cnt As Long
@@ -45,7 +45,7 @@ Sub 查看当期数据()
     
 End Sub
 
-Sub 查看全部信息()
+Sub 查看全部信息(ByRef control As Office.IRibbonControl)
 Dim wkSheet As Worksheet
 Dim cnt, col
 Dim ctrls As Object

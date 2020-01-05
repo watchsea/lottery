@@ -1,7 +1,7 @@
 ﻿Attribute VB_Name = "realval"
 Option Explicit
 
-Sub 实力值计算()
+Sub 实力值计算(ByRef control As Office.IRibbonControl)
 '******************************************************************************************
 '
 '实力值数据更新

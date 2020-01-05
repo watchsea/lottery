@@ -1,7 +1,7 @@
 ﻿Attribute VB_Name = "deal"
 Option Explicit
 
-Sub 数据初始()
+Sub 数据初始(ByRef control As Office.IRibbonControl)
 '------------------------------------------------------------------------------------
 '数据初始化分为两步走：
 '    1.从【综合数据】第一次加载数据
@@ -539,7 +539,7 @@ Next
 End Sub
 
 
-Sub 数据更新()
+Sub 数据更新(ByRef control As Office.IRibbonControl)
 '******************************************************************************************
 '
 '即时值更新，前一个即时值移入即时值1，新进的数据写入到即时值2
@@ -1178,7 +1178,7 @@ Loop
     Set dataSheet = Nothing
 End Sub
 
-Sub 模式计算()
+Sub 模式计算(ByRef control As Office.IRibbonControl)
 Dim data()
 Dim configData()
 Dim dataSheet As Worksheet
@@ -2430,7 +2430,7 @@ End Sub
 
 
 
-Sub 手工数据刷新()
+Sub 手工数据刷新(ByRef control As Office.IRibbonControl)
 Dim data()
 Dim configData()
 Dim dataSheet As Worksheet

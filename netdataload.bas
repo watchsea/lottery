@@ -7,7 +7,7 @@ Option Explicit
 #End If
 
 
-Sub 网站数据更新()
+Sub 网站数据更新(ByRef control As Office.IRibbonControl)
 Dim matchdate As Date
 Dim begindate As Date
 Dim enddate As Date
@@ -91,7 +91,7 @@ matchdate = Date
 End Sub
 
 
-Sub 澳客网数据更新()
+Sub 澳客网数据更新(ByRef control As Office.IRibbonControl)
 Dim matchdate As Date
 Dim begindate As Date
 Dim enddate As Date
@@ -540,7 +540,7 @@ With IE
 End With
 'Application.ScreenUpdating = False
 
-Set tt = doc.getElementById("table_schedule").getElementsbyTagName("tr")
+Set tt = doc.getElementById("table_schedule").getElementsByTagName("tr")
 rowcnt = tt.Length - 1
 colCnt = tt(0).Cells.Length - 1
 col = 0
@@ -735,7 +735,7 @@ Sub 中国竞彩网数据载入()
 
 
 
-Function 取球队联赛积分(dataAvg, ids As String)
+Function 取球队联赛积分(dataAvg, ids As String, priTeam As String, secTeam As String)
 '------------------------------------------------------------------
 'create 2015.3.28  ljqu
 '
@@ -748,15 +748,20 @@ Dim doc As Object
 Dim k As Integer
 Dim i As Integer
 Dim j As Integer
+Dim cnt As Integer
 Dim data1(7, 10)
 Dim rowcnt As Integer
 Dim colCnt As Integer
+Dim tables
+Dim table
+
 
 Dim tt As Object
 Dim tt1, tt2, tt3
 Dim URL
 
 URL = "http://zq.win007.com/analysis/" + ids + "cn.htm"
+
 
 Set IE = UserForm1.WebBrowser1
 With IE
@@ -773,40 +778,50 @@ ReDim dataAvg(103)   '0-43,主队积分信息，44-87：客队积分信息，
                    '92—95：Bet365欧转亚盘即时：主队、让球、客队、总水位
                    '96—99：澳彩欧转亚盘初盘：主队、让球、客队、总水位
                    '100—103：澳彩欧转亚盘即时：主队、让球、客队、总水位
-rowcnt = 7
-colCnt = 10
+    rowcnt = 7
+    colCnt = 10
 
     If doc.getElementById("porlet_5") Is Nothing Then
         取球队联赛积分 = False
         Exit Function
     End If
-    Set tt = doc.getElementById("porlet_5").ChildNodes(0).ChildNodes(1)   '取联赛积分排名数据
-    Set tt1 = tt.Cells(0).ChildNodes(0).ChildNodes(0)     '主队全场数据，保存：总、主、客、近6
-    Set tt2 = tt.Cells(1).ChildNodes(0).ChildNodes(0)     '客队全场数据，保存：总、主、客、近6
-    If tt1.ChildNodes.Length = 6 Then
-       For i = 2 To tt1.ChildNodes.Length - 1
-           For j = 0 To colCnt
-            data1(i - 2, j) = tt1.ChildNodes(i).Cells(j).innerText
-           Next
+    
+    Set tables = doc.getElementById("porlet_5").getElementsByTagName("tbody")    '取联赛排名积分下的所有表格体
+    
+    For cnt = 0 To tables.Length - 1
+        Set table = tables(cnt)
+        '主队情况：主队全场数据，保存：总、主、客、近6
+        If table.Rows.Length = 6 And InStr(table.Rows(0).innerText, priTeam) > 0 And InStr(table.Rows(0).innerText, secTeam) = 0 Then
+        
+            For i = 2 To table.Rows.Length - 1
+               For j = 0 To colCnt
+                data1(i - 2, j) = table.Rows(i).Cells(j).innerText
+               Next
+            Next
+        End If
+        
+        '客队情况：客队全场数据，保存：总、主、客、近6
+        If table.Rows.Length = 6 And InStr(table.Rows(0).innerText, priTeam) = 0 And InStr(table.Rows(0).innerText, secTeam) > 0 Then
+            For i = 2 To table.Rows.Length - 1
+               For j = 0 To colCnt
+                data1(4 + i - 2, j) = table.Rows(i).Cells(j).innerText
+               Next
+            Next
+        End If
+    Next
+    
+    '移动联赛积分数据
+    For i = 0 To rowcnt
+       For j = 0 To colCnt
+           dataAvg(j + i * (colCnt + 1)) = data1(i, j)
        Next
-       For i = 2 To tt2.ChildNodes.Length - 1
-           For j = 0 To colCnt
-            data1(4 + i - 2, j) = tt2.ChildNodes(i).Cells(j).innerText
-           Next
-       Next
-
+    Next
+    
      
-     '移动联赛积分数据
-     For i = 0 To rowcnt
-        For j = 0 To colCnt
-            dataAvg(j + i * (colCnt + 1)) = data1(i, j)
-        Next
-     Next
+    '获取即时赔率比较
+    If doc.getElementById("porlet_1").ChildNodes.Length > 0 Then
      
-     '获取即时赔率比较
-     If doc.getElementById("porlet_1").ChildNodes.Length > 0 Then
-     
-        Set tt = doc.getElementById("porlet_1").ChildNodes(1).ChildNodes(0)   '取联赛积分排名数据
+        Set tt = doc.getElementById("porlet_1").getElementsByTagName("tbody")(0)   '取联赛积分排名数据
         
         For i = 0 To tt.Rows.Length - 1    '行
         
@@ -816,35 +831,34 @@ colCnt = 10
                        dataAvg(88) = tt.Rows.Item(i).Cells(5).innerText
                        dataAvg(89) = tt.Rows.Item(i).Cells(6).innerText
                        dataAvg(90) = tt.Rows.Item(i).Cells(7).innerText
-                       dataAvg(91) = tt.Rows.Item(i).Cells(8).innerText
+                       'dataAvg(91) = tt.Rows.Item(i).Cells(8).innerText
                        
                        dataAvg(92) = tt.Rows.Item(i + 1).Cells(4).innerText
                        dataAvg(93) = tt.Rows.Item(i + 1).Cells(5).innerText
                        dataAvg(94) = tt.Rows.Item(i + 1).Cells(6).innerText
-                       dataAvg(95) = tt.Rows.Item(i + 1).Cells(7).innerText
+                       'dataAvg(95) = tt.Rows.Item(i + 1).Cells(7).innerText
                        
-                   ElseIf InStr(tt3, "澳彩") > 0 Then
+                   ElseIf InStr(tt3, "澳门") > 0 Then
                        dataAvg(96) = tt.Rows.Item(i).Cells(5).innerText
                        dataAvg(97) = tt.Rows.Item(i).Cells(6).innerText
                        dataAvg(98) = tt.Rows.Item(i).Cells(7).innerText
-                       dataAvg(99) = tt.Rows.Item(i).Cells(8).innerText
+                       'dataAvg(99) = tt.Rows.Item(i).Cells(8).innerText
                        
                        dataAvg(100) = tt.Rows.Item(i + 1).Cells(4).innerText
                        dataAvg(101) = tt.Rows.Item(i + 1).Cells(5).innerText
                        dataAvg(102) = tt.Rows.Item(i + 1).Cells(6).innerText
-                       dataAvg(103) = tt.Rows.Item(i + 1).Cells(7).innerText
+                       'dataAvg(103) = tt.Rows.Item(i + 1).Cells(7).innerText
                        
                    End If
                End If
         Next
-     End If
-     取球队联赛积分 = True
-   Else
-      取球队联赛积分 = False
-   End If
+        取球队联赛积分 = True
+    Else
+        取球队联赛积分 = False
+    End If
 
-     Set doc = Nothing
-     Set IE = Nothing
+    Set doc = Nothing
+    Set IE = Nothing
 End Function
 
 
@@ -857,6 +871,8 @@ Dim rowNo
 Dim col
 Dim i, j
 Dim vsId As String
+Dim priTeam As String
+Dim secTeam As String
 Dim data()
 Dim bfData()
 Dim srcdata()
@@ -877,12 +893,15 @@ ReDim data(rowNo, 104)     'id号，主队积分44个数据，客队积分44个�
     '101—104：澳彩欧转亚盘即时：主队、让球、客队、总水位
 For i = 1 To rowNo
     vsId = srcdata(i, 0)
+    priTeam = srcdata(i, 4)
+    secTeam = srcdata(i, 5)
+    
     'Sleep 80
     
     '根据vsId获取相应的数据组，四个指标数据
     'Call 取欧赔指数(bfData, CStr(vsId))
     
-    If 取球队联赛积分(bfData, CStr(vsId)) Then     '如果有数据
+    If 取球队联赛积分(bfData, CStr(vsId), priTeam, secTeam) Then   '如果有数据
     '拼装成新形式的数据格式
         data(i, 0) = vsId
         For j = 0 To 103

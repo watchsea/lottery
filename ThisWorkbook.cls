@@ -8,9 +8,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Private Sub Workbook_AddinInstall()
-    AddCommandbars
+    'AddCommandbars
 End Sub
 
 Private Sub Workbook_AddinUninstall()
-    DelCommandBars
+    'DelCommandBars
 End Sub
