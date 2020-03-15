@@ -88,7 +88,8 @@ Dim wkSheet As Worksheet
 
 Set wkSheet = ActiveWorkbook.Sheets(sheetName)
 rowNo = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
-ReDim dataArr(rowNo - 1, 32)
+col = 32
+ReDim dataArr(rowNo - 1, col)
 
    'id号，四个指标（赔1、赔2、bf1、bf3），前2个指标6个数据，后2个指标各有8个
     '1-4  :赔1：初始值（胜平负）  5-8  :赔1：即时值（胜平负）
@@ -98,7 +99,7 @@ ReDim dataArr(rowNo - 1, 32)
 Loc = 1
 For i = 2 To rowNo
     If wkSheet.Cells(i, 1) <> "" Then
-        For j = 1 To 33
+        For j = 1 To col + 1
             If wkSheet.Cells(i, j) <> 0 Then
                 dataArr(Loc, j - 1) = wkSheet.Cells(i, j)
             End If
@@ -109,10 +110,10 @@ For i = 2 To rowNo
     End If
 Next
 
-ReDim datas(Loc - 1, 32)
+ReDim datas(Loc - 1, col)
 '数据移植至输出数组
 For i = 1 To Loc - 1
-    For j = 0 To 32
+    For j = 0 To col
         datas(i, j) = dataArr(i, j)
     Next
 Next
@@ -121,6 +122,108 @@ Set wkSheet = Nothing
 
 
 End Sub
+
+
+
+Sub 欧指数据载入(datas, sheetName As String)
+'------------------------------------------------------------
+'datas:数据输出的数组
+' 2020.03.15
+'------------------------------------------------------------
+Dim rowNo
+Dim col
+Dim i, j
+Dim vsId
+Dim bfData() As Double
+
+Dim dataArr
+Dim Loc
+Dim wkSheet As Worksheet
+
+Set wkSheet = ActiveWorkbook.Sheets(sheetName)
+rowNo = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
+col = 26
+ReDim dataArr(rowNo - 1, col)
+
+   'id号，二个指标（欧指、价位）有四项数据（包含返还率，其他（成交量、成交比、必发转换亚盘、庄家盈亏、盈亏指数、冷热指数）有三项数据
+    '1-4  :欧指：（胜平负、返还率）  5-8  :价位：（胜平负、返还率）
+    '9-11：成交量：（胜平负）  12-14：成交比：（胜平负）
+    '15-17：必发转换亚盘:（胜、平、负、返还率）  18——20：庄家盈亏（胜、平、负、返还率）
+    '21-23：盈亏指数（胜、平、负、返还率）  24——26：冷热指数:（胜、平、负、返还率）
+Loc = 1
+For i = 2 To rowNo
+    If wkSheet.Cells(i, 1) <> "" Then
+        For j = 1 To col + 1
+            If wkSheet.Cells(i, j) <> 0 And wkSheet.Cells(i, j) <> "NaN" Then
+                dataArr(Loc, j - 1) = wkSheet.Cells(i, j)
+            End If
+        Next
+        Loc = Loc + 1
+    End If
+Next
+
+Loc = Loc - 1
+ReDim datas(Loc, col)
+'数据移植至输出数组
+For i = 1 To Loc
+    For j = 0 To col
+        datas(i, j) = dataArr(i, j)
+    Next
+Next
+'清除缓存
+Set wkSheet = Nothing
+End Sub
+
+
+Sub 亚指数据载入(datas, sheetName As String)
+'------------------------------------------------------------
+'datas:数据输出的数组
+' 2020.03.15
+'------------------------------------------------------------
+Dim rowNo
+Dim col
+Dim i, j
+Dim vsId
+Dim bfData() As Double
+
+Dim dataArr
+Dim Loc
+Dim wkSheet As Worksheet
+
+Set wkSheet = ActiveWorkbook.Sheets(sheetName)
+rowNo = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
+col = 12
+ReDim dataArr(rowNo - 1, col)
+
+   'id号，二个指标（澳门、Bet365）有三项数据
+    '1-3  :澳门：初始值（胜平负）  4-6  :澳门：即时值（胜平负）
+    '7-9：Bet365：初始值（胜平负）  10-12：Bet365：即时值（胜平负）
+
+Loc = 1
+For i = 2 To rowNo
+    If wkSheet.Cells(i, 1) <> "" Then
+        For j = 1 To col + 1
+            If wkSheet.Cells(i, j) <> 0 And wkSheet.Cells(i, j) <> "Nan" Then
+                dataArr(Loc, j - 1) = wkSheet.Cells(i, j)
+            End If
+        Next
+        Loc = Loc + 1
+    End If
+Next
+
+Loc = Loc - 1
+ReDim datas(Loc, col)
+'数据移植至输出数组
+For i = 1 To Loc
+    For j = 0 To col
+        datas(i, j) = dataArr(i, j)
+    Next
+Next
+'清除缓存
+Set wkSheet = Nothing
+End Sub
+
+
 
 Sub 球探网联赛积分载入(datas, sheetName As String)
 '------------------------------------------------------------
@@ -742,7 +845,7 @@ Next
 
 '保存当期的期数
 dataSheet.Cells(1, 9) = lotterySel(0).Value
-Application.CommandBars("彩票分析").Controls(6).Caption = "查看【" + CStr(lotterySel(0).Value) + "】期"
+'Application.CommandBars("彩票分析").Controls(6).Caption = "查看【" + CStr(lotterySel(0).Value) + "】期"
 
 
 '-----------------------------------处理澳客网（胜负指数）开始----------------------------------------

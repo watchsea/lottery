@@ -1,7 +1,81 @@
 ﻿Attribute VB_Name = "test"
 Sub 程序升级(ByRef control As Office.IRibbonControl)
-    Call 程序升级20190907
+    Call 程序升级20200315
 End Sub
+Sub 程序升级20200315()
+    Dim sheet1 As Worksheet
+    Dim tmClBgCol As Long
+    Dim colDesp
+    Dim colIndex, cols
+    Dim insertColIdx
+    Dim k1, i, j
+    Dim baseCnt
+    Dim colRange As String
+
+    Call 配置数据载入(dataConfig, "Config")
+    Set sheet1 = ActiveWorkbook.Sheets("综合数据")
+    Call 初始化一般字典(dataColDict, sheet1, 4, 0, 1, False)
+    
+    i = dataColDict.Item("LOSE1")  '数据插在LOSE1之前
+
+     
+    For k1 = 2 To UBound(dataConfig)
+        If Not (dataColDict.exists(dataConfig(k1, 2))) And dataConfig(k1, 15) = "Y" And dataConfig(k1, 16) = "20200315" Then
+            baseCnt = CInt(dataConfig(k1, 9))
+            If baseCnt = 4 Then
+                colIndex = "胜,平,负,返还率"
+            Else
+                colIndex = "胜,平,负"
+            End If
+            If CBool(dataConfig(k1, 7)) Then
+                baseCnt = baseCnt + 1
+                colIndex = colIndex + ",标识"
+            End If
+            If dataConfig(k1, 8) <> "FALSE" Then
+                baseCnt = baseCnt + 1
+                colIndex = colIndex + ",比较"
+            End If
+            
+            For j = 1 To baseCnt
+                sheet1.Cells.Columns(i).Insert Shift:=xlToRight   ', CopyOrigin:=xlFormatFromLeftOrAbove
+            Next
+            'sheet1.Cells.Columns(colRange).Insert Shift:=xlToRight   ', CopyOrigin:=xlFormatFromLeftOrAbove
+            sheet1.Range(Cells(2, i), Cells(2, i + baseCnt - 1)).Merge
+            colDesp = dataConfig(k1, 1)
+            sheet1.Cells(2, i) = colDesp
+            cols = Split(colIndex, ",")
+            sheet1.Range(Cells(2, i), Cells(3, i + baseCnt - 1)).Borders.LineStyle = 1
+            For j = 0 To baseCnt - 1
+                sheet1.Cells(3, i + j) = cols(j)
+            Next
+            sheet1.Cells(4, i) = dataConfig(k1, 2)
+            i = i + baseCnt
+            
+        End If
+    Next
+    
+    '必发指数
+    If Not (dataColDict.exists("BFZS")) Then
+    
+        For j = 1 To 3
+            sheet1.Cells.Columns(i).Insert Shift:=xlToRight   ', CopyOrigin:=xlFormatFromLeftOrAbove
+        Next
+        'sheet1.Cells.Columns(colRange).Insert Shift:=xlToRight   ', CopyOrigin:=xlFormatFromLeftOrAbove
+        sheet1.Range(Cells(2, i), Cells(2, i + 2)).Merge
+        sheet1.Cells(2, i) = "必发指数"
+        colIndex = "胜,平,负"
+        cols = Split(colIndex, ",")
+        sheet1.Range(Cells(2, i), Cells(3, i + baseCnt - 1)).Borders.LineStyle = 1
+        For j = 0 To 2
+            sheet1.Cells(3, i + j) = cols(j)
+        Next
+        sheet1.Cells(4, i) = "BFZS"
+    End If
+    
+    MsgBox ("升级完成！")
+    
+End Sub
+
 Sub 程序升级20180715()
 
     Dim sheet1 As Worksheet
@@ -624,5 +698,5 @@ End Sub
 
 Sub 测试积分数据导入()
     Call 初始化字典(leagueDict, "01赛事")
-    Call 球探网赛事积分数据载入
+    Call 球探网BF成交载入
 End Sub

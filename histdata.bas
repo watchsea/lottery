@@ -632,7 +632,7 @@ dt = begindate
                 wkSheet.Cells(Loc, 3) = Right(Klinfo(j).Cells(0).innerText, 3)    '编号
                 wkSheet.Cells(Loc, 4) = Klinfo(j).Cells(1).innerText     '联赛
                 tt = Split(Klinfo(j).Cells(2).innerText, " ")
-                If DatePart("m", pDt) = 12 And Split(tt(0), "-")(0) = "01" Then
+                If DatePart("m", dt) = 12 And Split(tt(0), "-")(0) = "01" Then
                     wkSheet.Cells(Loc, 5) = CStr(DatePart("yyyy", dt) + 1) & "-" & tt(0)  '日期
                 Else
                     wkSheet.Cells(Loc, 5) = CStr(DatePart("yyyy", dt)) & "-" & tt(0)    '日期

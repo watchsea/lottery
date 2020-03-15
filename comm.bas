@@ -184,7 +184,7 @@ Function UTF8toChineseCharacters(szInput)
     Set js = CreateObjectx86("MSScriptControl.ScriptControl")
     js.Language = "JavaScript"
     js.AddCode "function decode(str){return unescape(str.replace(/\\u/g,'%u'));}"
-    UTF8toChineseCharacters = js.Eval("decode('" & szInput & "')")
+    UTF8toChineseCharacters = js.eval("decode('" & szInput & "')")
 End Function
 
 '从JSON中取项目值
@@ -306,4 +306,14 @@ Function CreateWindow()
             Err.Clear
         Next
     Loop
+End Function
+
+
+
+Function getUnixTime()  '获取Unix时间戳
+    getUnixTime = DateDiff("s", "01/01/1970 00:00:00", Now())
+End Function
+
+Function getdateTime(unixTime As Long) 'UNIX时间戳转北京时间
+    getdateTime = DateAdd("s", unixTime, "01/01/1970 00:00:00")
 End Function

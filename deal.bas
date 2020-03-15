@@ -1,6 +1,7 @@
 ﻿Attribute VB_Name = "deal"
 Option Explicit
 
+
 Sub 数据初始(ByRef control As Office.IRibbonControl)
 '------------------------------------------------------------------------------------
 '数据初始化分为两步走：
@@ -26,6 +27,11 @@ Dim dataE()
 Dim dataJ()
 Dim dataL12()   '赔1、赔2
 Dim dataJF()    '球探网联赛积分
+Dim dataOZ()     '欧指数据   2020.03.15
+Dim dataYZ()    '亚指数据   2020.03.15
+Dim datatmp()   '临时用数据表 2020.03.15
+Dim datasrc As String '数据来源表名 2020.03.15
+
 
 Dim dataBF()   '澳客网必发
 Dim dataSF()   '澳客网胜负
@@ -37,8 +43,6 @@ Dim dataConfig()   '配置数据信息
 Dim dataJBf()     '竞彩网比分
 Dim dataJZjq()    '竞彩网总进球
 Dim dataJBqc()    '竞彩网半全场胜平负
-
-
 
 
 Dim i As Long
@@ -185,6 +189,8 @@ Call BF载入赔率(dataM, "球探网(BF)", "M")       '澳门
 Call BF载入赔率(dataL, "球探网(BF)", "L")       '立博（英国）
 Call BF载入赔率(dataE, "球探网(BF)", "E")       '易胜博
 Call 球探网联赛积分载入(dataJF, "球探网积分")    '联赛积分
+Call 欧指数据载入(dataOZ, "OZ")                 '欧指数据 2020.03.15
+Call 亚指数据载入(dataYZ, "YZ")                 '亚指数据 2020.03.15
 
 '---------------------------------
 '       澳客网数据载入
@@ -488,6 +494,34 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
          End If
      End If
  Next
+ 
+ 
+ 
+    '处理2020.03.15增加的数据
+    For k1 = 2 To UBound(dataConfig)
+       If dataColDict.exists(dataConfig(k1, 2)) And dataConfig(k1, 15) = "Y" And dataConfig(k1, 16) = "20200315" Then
+           datasrc = dataConfig(k1, 10) '配置定义的数据源
+           Select Case datasrc
+           Case "dataOZ"
+              datatmp = dataOZ
+           Case "dataYZ"
+              datatmp = dataYZ
+           End Select
+           
+           If dataColDict.exists(dataConfig(k1, 2)) Then     '如果存在增中的数据列
+                dataBgCol = dataColDict.Item(dataConfig(k1, 2))    '根据数据列标识，找到数据待插的首列
+                initialBgCol = dataConfig(k1, 4)      '初始值对应的数据列
+                realBgCol = dataConfig(k1, 5)         '实时值对应的数据列
+                For k = 1 To UBound(datatmp)          '对加载的数据进行循环
+                     vsId = datatmp(k, 0)
+                     If dataDict.exists(vsId) Then      '根据赛事ID号来进行匹配
+                        Loc = dataDict.Item(vsId)
+                        Application.Run dataConfig(k1, 11), dataSheet, datatmp, Loc, dataBgCol, k, initialBgCol, realBgCol, CBool(dataConfig(k1, 6)), CBool(dataConfig(k1, 7)), CStr(dataConfig(k1, 8)), CInt(dataConfig(k1, 9))
+                     End If
+                Next
+            End If
+       End If
+    Next
 
 
 
@@ -560,6 +594,10 @@ Dim dataE()
 Dim dataJ()
 Dim dataL12()   '赔1、赔2
 Dim dataJF()    '球探网联赛积分
+Dim dataOZ()    '欧指数据   2020.03.15
+Dim dataYZ()    '亚指数据   2020.03.15
+Dim datatmp()   '临时数据存放 2020.03.15
+Dim datasrc As String  '临时数据存放 2020.03.15
 
 Dim dataBF()   '澳客网必发
 Dim dataSF()   '澳客网胜负
@@ -739,6 +777,8 @@ Call BF载入赔率(dataM, "球探网(BF)", "M")       '澳门
 Call BF载入赔率(dataL, "球探网(BF)", "L")       '立博（英国）
 Call BF载入赔率(dataE, "球探网(BF)", "E")       '易胜博
 Call 球探网联赛积分载入(dataJF, "球探网积分")    '联赛积分
+Call 欧指数据载入(dataOZ, "OZ")                 '欧指数据 2020.03.15
+Call 亚指数据载入(dataYZ, "YZ")                 '亚指数据 2020.03.15
 
 '-------------------------------------------
 '    澳客网数据载入
@@ -861,6 +901,34 @@ Do While j <= tloc
             
             End If
         End If
+        
+        
+        '处理2020.03.15增加的数据
+        For k1 = 2 To UBound(dataConfig)
+           If dataColDict.exists(dataConfig(k1, 2)) And dataConfig(k1, 15) = "Y" And dataConfig(k1, 16) = "20200315" Then
+               datasrc = dataConfig(k1, 10) '配置定义的数据源
+               Select Case datasrc
+               Case "dataOZ"
+                  datatmp = dataOZ
+               Case "dataYZ"
+                  datatmp = dataYZ
+               End Select
+               
+               If UBound(datatmp) > 0 Then
+                    dataBgCol = dataColDict.Item(dataConfig(k1, 2))    '根据数据列标识，找到数据待插的首列
+                    initialBgCol = dataConfig(k1, 4)      '初始值对应的数据列
+                    realBgCol = dataConfig(k1, 5)         '实时值对应的数据列
+                    For k = 1 To UBound(datatmp)          '对加载的数据进行循环
+                         If vsId = datatmp(k, 0) Then   '直接比较球赛ID号
+                            Application.Run dataConfig(k1, 12), dataSheet, datatmp, Loc, dataBgCol, k, initialBgCol, realBgCol, CBool(dataConfig(k1, 7)), CStr(dataConfig(k1, 8)), CInt(dataConfig(k1, 9))
+                         End If
+                    Next
+                End If
+           End If
+        Next
+        
+        '2020.03.15计算必发指数
+        Call 计算必发指数(dataColDict, dataSheet, Loc)
         
         '**************************************************************************************
         '                      中国竞彩网数据处理
@@ -3352,5 +3420,45 @@ downColor = vbGreen
         End If
         
     End If
+
+End Sub
+
+
+Sub 计算必发指数(dataColDict, dataSheet, Loc)
+''
+'' 计算必发指数
+'' dataColDict为列位置字典
+'' dataSheet为数据页
+'' Loc为数据填充的行号
+''
+Dim bfzsCol
+Dim priceCol
+Dim volCol
+Dim total
+Dim i
+Dim sum1, sum2, sum3
+Dim zs1, zs2, zs3
+
+If Not dataColDict.exists("BFZS") Or Not dataColDict.exists("BFVOL") Or Not dataColDict.exists("BFPRICE") Then
+    Exit Sub
+End If
+bfzsCol = dataColDict("BFZS")
+volCol = dataColDict("BFVOL")
+priceCol = dataColDict("BFPRICE")
+
+For i = 0 To 2
+    sum1 = dataSheet.Cells(Loc - i, priceCol) * dataSheet.Cells(Loc - i, volCol)   '胜
+    sum2 = dataSheet.Cells(Loc - i, priceCol + 1) * dataSheet.Cells(Loc - i, volCol + 1) '平
+    sum3 = dataSheet.Cells(Loc - i, priceCol + 2) * dataSheet.Cells(Loc - i, volCol + 2) '负
+    total = sum1 + sum2 + sum3
+    If total > 0 Then
+        zs1 = Round(sum1 / total, 4)
+        zs2 = Round(sum2 / total, 4)
+        zs3 = Round(sum3 / total, 4)
+        dataSheet.Cells(Loc - i, bfzsCol) = zs1
+        dataSheet.Cells(Loc - i, bfzsCol + 1) = zs2
+        dataSheet.Cells(Loc - i, bfzsCol + 2) = zs3
+    End If
+Next
 
 End Sub

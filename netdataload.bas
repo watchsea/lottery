@@ -17,6 +17,8 @@ Dim infoStr As String
 Dim s1 As String
 Dim s2 As String
 Dim s3 As String
+Dim s4 As String
+Dim s5 As String
 Dim s8 As String
 Dim s9 As String
 
@@ -30,7 +32,9 @@ Dim exectm
 s1 = "1.球探网威廉希尔数据"
 s2 = "2.球探网BF数据"
 s3 = "3.球探网赛事积分数据"
-s8 = "4.竞彩网数据"
+s4 = "4.球探网平均欧指数据"
+s5 = "5.球探网亚指数据"
+s8 = "6.竞彩网数据"
 
 
 matchdate = Date
@@ -42,7 +46,7 @@ matchdate = Date
     Call 球探网数据载入("球探网(W)", "id=115&company=威廉希尔(英国)", matchdate)
     exectm = DateDiff("m", bgTm, Now)
     s1 = s1 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5 & Chr(10) & s8
     MsgBox (infoStr)
     
     
@@ -51,7 +55,7 @@ matchdate = Date
     Call 球探网BF数据载入
     exectm = DateDiff("m", bgTm, Now)
     s2 = s2 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5 & Chr(10) & s8
     MsgBox (infoStr)
     
     
@@ -61,9 +65,25 @@ matchdate = Date
     Call 球探网赛事积分数据载入
     exectm = DateDiff("n", bgTm, Now)
     s3 = s3 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5 & Chr(10) & s8
     MsgBox (infoStr)
     
+    
+    bgTm = Now
+    Application.StatusBar = "球探网赛事平均欧指数据导入【" & bgTm & "】......"
+    Call 球探网BF成交载入
+    exectm = DateDiff("n", bgTm, Now)
+    s4 = s4 & "，已完成导入，耗时：" & exectm & "分"
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5 & Chr(10) & s8
+    MsgBox (infoStr)
+    
+    bgTm = Now
+    Application.StatusBar = "球探网赛事亚指数据导入【" & bgTm & "】......"
+    Call 球探网亚指数据载入
+    exectm = DateDiff("n", bgTm, Now)
+    s5 = s5 & "，已完成导入，耗时：" & exectm & "分"
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5 & Chr(10) & s8
+    MsgBox (infoStr)
     
     
     
@@ -81,7 +101,7 @@ matchdate = Date
     Call 竞彩网半全场胜平负数据载入
     exectm = DateDiff("n", bgTm, Now)
     s8 = s8 & "，已完成导入，耗时：" & exectm & "分"
-    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s8
+    infoStr = s1 & Chr(10) & s2 & Chr(10) & s3 & Chr(10) & s4 & Chr(10) & s5 & Chr(10) & s8
     MsgBox (infoStr)
     
     Application.StatusBar = "球探网和竞彩网站数据导入完毕！"
@@ -368,8 +388,6 @@ End Sub
 
 
 
-
-
 Function 取欧赔指数(dataAvg, ids As String)
 '------------------------------------------------------------------
 'dataAvg:返回的平均值及Beffair值
@@ -496,6 +514,381 @@ URL = "http://1x2d.win007.com/" + ids + ".js"
 End Function
 
 
+Sub 球探网BF成交载入()
+'------------------------------------------------------------
+'dataBF:数据输出的数组
+'dataW:要查找的数据根据data(,0)的ID号去链接新的网址数据
+'------------------------------------------------------------
+Dim rowNo
+Dim col
+Dim i, j
+Dim vsId As String
+Dim data()
+Dim bfData()
+Dim srcdata()
+Dim wkSheet As Worksheet
+
+
+Call LoadDataToArray(srcdata, "球探网(W)")
+
+rowNo = UBound(srcdata, 1)
+ReDim data(rowNo, 26)     'id号，2个指标（平均欧指-指数，返还率）、必发成交（价位、返还率、成交量、成交比），必发转换亚盘、盈亏指数、冷热指数，
+                          '以上指标各个有3个（胜、平、负）对应（主队、平局、客队）
+    '1-4  :平均欧指-指数：（胜、平、负）、返还率
+    '5-8 : 必发成交-价位：（胜、平、负）、返还率
+    '9-11: 必发成交—成交量（胜、平、负）、
+    '12-14:必发成交-成交价（胜、平、负）
+    '15-17: 必发转换亚盘（胜、平、负）
+    '18-20: 庄家盈亏（胜、平、负）
+    '21-23: 盈亏指数（胜、平、负）
+    '24-26：冷热指数（胜、平、负）
+    
+    
+For i = 1 To rowNo
+    vsId = srcdata(i, 0)
+    
+    If 取欧指数据(bfData, CStr(vsId)) Then     '如果有数据
+    '返回数据格式：选项，指数，概率，返还率，价位，概率，返还率，成交量
+    '成交比，必发换换亚盘，庄家盈亏，冷热指数（1-13）
+    '拼装成新形式的数据格式
+        data(i, 0) = vsId
+        '赔1：1-4,5-8
+        col = 1
+        For j = 2 To UBound(bfData, 2)
+            If InStr("3,6", j) = 0 Then   '去掉概率数据
+                If j = 4 Then '返还率只添加一次
+                    data(i, col) = bfData(1, j)
+                    col = col + 1
+                
+                ElseIf j = 7 Then
+                    data(i, col) = bfData(1, j)
+                    col = col + 1
+                Else '其他数据添加3次
+                    data(i, col) = bfData(1, j)
+                    data(i, col + 1) = bfData(2, j)
+                    data(i, col + 2) = bfData(3, j)
+                    col = col + 3
+                End If
+            
+            End If
+        Next
+        
+        
+    End If
+Next
+
+Set wkSheet = ActiveWorkbook.Sheets("OZ")
+wkSheet.Cells.ClearContents
+
+wkSheet.Cells(1, 1) = "序号"
+wkSheet.Cells(1, 2) = "指数-胜"
+wkSheet.Cells(1, 3) = "平"
+wkSheet.Cells(1, 4) = "负"
+wkSheet.Cells(1, 5) = "返还率"
+
+wkSheet.Cells(1, 6) = "价位-胜"
+wkSheet.Cells(1, 7) = "平"
+wkSheet.Cells(1, 8) = "负"
+wkSheet.Cells(1, 9) = "返还率"
+
+wkSheet.Cells(1, 10) = "成交量-胜"
+wkSheet.Cells(1, 11) = "平"
+wkSheet.Cells(1, 12) = "负"
+
+
+wkSheet.Cells(1, 13) = "成交比-胜"
+wkSheet.Cells(1, 14) = "平"
+wkSheet.Cells(1, 15) = "负"
+
+
+wkSheet.Cells(1, 16) = "必发转换亚盘_胜"
+wkSheet.Cells(1, 17) = "平"
+wkSheet.Cells(1, 18) = "负"
+
+wkSheet.Cells(1, 19) = "庄家盈亏_胜"
+wkSheet.Cells(1, 20) = "平"
+wkSheet.Cells(1, 21) = "负"
+
+wkSheet.Cells(1, 22) = "盈亏指数_胜"
+wkSheet.Cells(1, 23) = "平"
+wkSheet.Cells(1, 24) = "负"
+
+wkSheet.Cells(1, 25) = "冷热指数_胜"
+wkSheet.Cells(1, 26) = "平"
+wkSheet.Cells(1, 27) = "负"
+
+
+
+For i = 1 To rowNo
+    For j = 0 To 26
+        wkSheet.Cells(i + 1, j + 1) = data(i, j)
+    Next
+Next
+
+End Sub
+
+
+
+Function 取欧指数据(data, ids As String)
+'------------------------------------------------------------------
+'dataAvg:返回的平均值及Beffair值
+'ids:球赛对应的id号
+'------------------------------------------------------------------
+Dim IE As Object
+Dim doc As Object
+Dim k As Integer
+Dim i As Integer
+Dim j As Integer
+Dim rowcnt As Integer
+Dim colCnt As Integer
+
+
+Dim cols
+
+Dim winhttp As Object
+Dim tt
+Dim tt1, tt2, tt3
+Dim URL
+Dim oDoc As Object
+
+
+URL = "http://zq.win007.com/analysis/" + ids + "cn.htm"
+
+Set IE = UserForm1.WebBrowser1
+
+With IE
+  .Navigate URL '网址
+  Do Until .ReadyState = 4
+    DoEvents
+  Loop
+  
+  On Error GoTo ErrorRead
+    .document.parentWindow.execScript "loadData()"
+      
+  Set doc = .document
+  
+End With
+
+
+
+'Application.ScreenUpdating = False
+
+Set tt = doc.getElementById("analy_BetfaStandard")
+tt1 = "<TABLE>" + tt.innerHTML + "</TABLE>"
+
+
+Set oDoc = CreateObject("htmlfile")
+oDoc.body.innerHTML = tt1
+
+'将二进制转换UTF-8
+         'tt = BytesToBstr(.responseBody, "UTF-8")
+         '将UTF-8转换为汉字
+         'tt1 = UTF8toChineseCharacters(tt)
+
+'With CreateObject("new:{1C3B4210-F441-11CE-B9EA-00AA006B1A69}")       '调试用，数据放入剪贴板
+'   .SetText tt1 'Text
+'    .PutInClipboard
+'End With
+
+Set tt2 = oDoc.getElementsByTagName("tr")
+rowcnt = tt2.Length
+If rowcnt > 0 Then     '找到game=Array(字串，表明有欧赔数据
+    ReDim data(3, 13)
+    For i = 3 To rowcnt - 1
+       Set tt3 = tt2(i).Cells
+       colCnt = tt3.Length
+       k = 1
+       For j = 0 To colCnt - 1
+            If InStr("4,5", i) > 0 And InStr("3,5", j) > 0 Then
+                k = k + 1
+            End If
+           data(i - 2, k) = tt3(j).innerText   'first coor(1,1)
+           k = k + 1
+       Next
+    Next
+    取欧指数据 = True
+Else
+   取欧指数据 = False
+End If
+Set winhttp = Nothing
+Set oDoc = Nothing
+Exit Function
+
+ErrorRead:
+  取欧指数据 = False
+  Set winhttp = Nothing
+  Exit Function
+
+
+End Function
+
+
+
+
+Sub 球探网亚指数据载入()
+'------------------------------------------------------------
+'dataBF:数据输出的数组
+'dataW:要查找的数据根据data(,0)的ID号去链接新的网址数据
+'------------------------------------------------------------
+Dim rowNo
+Dim col
+Dim i, j
+Dim vsId As String
+Dim data()
+Dim bfData()
+Dim srcdata()
+Dim wkSheet As Worksheet
+Dim labelStr, labels
+
+
+Call LoadDataToArray(srcdata, "球探网(W)")
+
+rowNo = UBound(srcdata, 1)
+                         
+labelStr = "序号,澳门-主队,盘口,客队,澳门-主队2,盘口2,客队2,Bet365-主队,盘口,客队,Bet365-主队2,盘口2,客队2"
+
+labels = Split(labelStr, ",")
+
+ReDim data(rowNo, UBound(labels))     'id号，澳门（【主队、盘口、客队】（初盘、终盘）)，bet365(【主队、盘口、客队】（初盘、终盘）)
+
+    
+For i = 1 To rowNo
+    vsId = srcdata(i, 0)
+    
+    If 取亚指数据(bfData, CStr(vsId)) Then     '如果有数据
+    '返回数据格式：选项，指数，概率，返还率，价位，概率，返还率，成交量
+    '成交比，必发换换亚盘，庄家盈亏，冷热指数（1-13）
+    '拼装成新形式的数据格式
+        data(i, 0) = vsId
+        '赔1：1-4,5-8
+        col = 1
+        For j = 1 To UBound(labels)
+            If j Mod 6 = 0 Then
+                data(i, j) = bfData(Int(j / 6), 6)
+            Else
+                data(i, j) = bfData(Int(j / 6) + 1, j Mod 6)
+            End If
+        Next
+    End If
+Next
+
+Set wkSheet = ActiveWorkbook.Sheets("YZ")
+wkSheet.Cells.ClearContents
+
+
+For i = 0 To UBound(labels)
+    wkSheet.Cells(1, i + 1) = labels(i)
+Next
+
+
+For i = 1 To rowNo
+    For j = 0 To UBound(labels)
+        wkSheet.Cells(i + 1, j + 1) = data(i, j)
+    Next
+Next
+
+End Sub
+
+
+Function 取亚指数据(data, ids As String)
+'------------------------------------------------------------------
+'dataAvg:返回的平均值及Beffair值
+'ids:球赛对应的id号
+'------------------------------------------------------------------
+Dim IE As Object
+Dim doc As Object
+Dim k As Integer
+Dim i As Integer
+Dim j As Integer
+Dim rowcnt As Integer
+Dim colCnt As Integer
+
+
+Dim cols
+
+Dim winhttp As Object
+Dim tt
+Dim tt1, tt2, tt3
+Dim URL
+Dim moreGet As Boolean
+Dim loopCnt As Integer
+
+
+
+URL = "http://vip.win007.com/AsianOdds_n.aspx?id=" + ids + "&l=0"
+
+Set IE = UserForm1.WebBrowser1
+moreGet = False
+loopCnt = 0
+Do
+    With IE
+      .Navigate URL '网址
+      Do Until .ReadyState = 4
+        DoEvents
+      Loop
+      
+      Set doc = .document
+    End With
+    
+    'Application.ScreenUpdating = False
+    
+    If InStr(doc.body.innerText, "操作太频繁了") > 0 Then
+        Sleep (300)
+        moreGet = True
+        loopCnt = loopCnt + 1
+        If loopCnt >= 10 Then
+            取亚指数据 = False
+            Exit Function
+        End If
+    End If
+Loop While moreGet
+
+Set tt = doc.getElementById("odds")
+
+Set tt2 = tt.getElementsByTagName("tr")
+rowcnt = tt2.Length
+If rowcnt > 0 Then     '找到game=Array(字串，表明有欧赔数据
+    ReDim data(2, 6)
+    k = 0
+    For i = 0 To rowcnt - 1
+       cols = tt2(i).innerHTML
+       If InStr(cols, "澳门") > 0 Then
+            Set tt3 = tt2(i).Cells
+            data(1, 1) = tt3(2).innerText
+            data(1, 2) = tt3(3).innerText
+            data(1, 3) = tt3(4).innerText
+            data(1, 4) = tt3(8).innerText
+            data(1, 5) = tt3(9).innerText
+            data(1, 6) = tt3(10).innerText
+            k = k + 1
+       End If
+       
+       If InStr(cols, "Bet365") > 0 Then
+            Set tt3 = tt2(i).Cells
+            data(2, 1) = tt3(2).innerText
+            data(2, 2) = tt3(3).innerText
+            data(2, 3) = tt3(4).innerText
+            data(2, 4) = tt3(8).innerText
+            data(2, 5) = tt3(9).innerText
+            data(2, 6) = tt3(10).innerText
+            k = k + 1
+       End If
+       
+       If k >= 2 Then
+        Exit For
+       End If
+    Next
+    If k > 0 Then    '两个有一个有数据
+        取亚指数据 = True
+    Else     '两个都没有数据
+        取亚指数据 = False
+    End If
+Else
+   取亚指数据 = False
+End If
+Set winhttp = Nothing
+
+End Function
 
 Sub 球探网数据载入(sheetName As String, ids, matchdate As Date)
 '------------------------------------------------------------------
