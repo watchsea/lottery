@@ -514,7 +514,7 @@ URL = "http://1x2d.win007.com/" + ids + ".js"
 End Function
 
 
-Sub 球探网BF成交载入()
+Sub 球探网BF成交载入(Optional hisFlag As Boolean = False)
 '------------------------------------------------------------
 'dataBF:数据输出的数组
 'dataW:要查找的数据根据data(,0)的ID号去链接新的网址数据
@@ -527,9 +527,15 @@ Dim data()
 Dim bfData()
 Dim srcdata()
 Dim wkSheet As Worksheet
+Dim idCol   '球队ID对应的列
 
-
-Call LoadDataToArray(srcdata, "球探网(W)")
+If hisFlag Then
+    Call 指定日期综合数据载入(srcdata)
+    idCol = 8
+Else
+    Call LoadDataToArray(srcdata, "球探网(W)")
+    idCol = 0
+End If
 
 rowNo = UBound(srcdata, 1)
 ReDim data(rowNo, 26)     'id号，2个指标（平均欧指-指数，返还率）、必发成交（价位、返还率、成交量、成交比），必发转换亚盘、盈亏指数、冷热指数，
@@ -545,7 +551,7 @@ ReDim data(rowNo, 26)     'id号，2个指标（平均欧指-指数，返还率�
     
     
 For i = 1 To rowNo
-    vsId = srcdata(i, 0)
+    vsId = srcdata(i, idCol)
     
     If 取欧指数据(bfData, CStr(vsId)) Then     '如果有数据
     '返回数据格式：选项，指数，概率，返还率，价位，概率，返还率，成交量
@@ -652,7 +658,7 @@ Dim URL
 Dim oDoc As Object
 
 
-URL = "http://zq.win007.com/analysis/" + ids + "cn.htm"
+URL = "http://zq.win007.com/analysis/" + ids + ".htm"
 
 Set IE = UserForm1.WebBrowser1
 
@@ -725,7 +731,7 @@ End Function
 
 
 
-Sub 球探网亚指数据载入()
+Sub 球探网亚指数据载入(Optional hisFlag As Boolean = False)
 '------------------------------------------------------------
 'dataBF:数据输出的数组
 'dataW:要查找的数据根据data(,0)的ID号去链接新的网址数据
@@ -739,9 +745,16 @@ Dim bfData()
 Dim srcdata()
 Dim wkSheet As Worksheet
 Dim labelStr, labels
+Dim idCol   '球队ID对应的列
 
 
-Call LoadDataToArray(srcdata, "球探网(W)")
+If hisFlag Then
+    Call 指定日期综合数据载入(srcdata)
+    idCol = 8
+Else
+    Call LoadDataToArray(srcdata, "球探网(W)")
+    idCol = 0
+End If
 
 rowNo = UBound(srcdata, 1)
                          
@@ -753,7 +766,7 @@ ReDim data(rowNo, UBound(labels))     'id号，澳门（【主队、盘口、客
 
     
 For i = 1 To rowNo
-    vsId = srcdata(i, 0)
+    vsId = srcdata(i, idCol)
     
     If 取亚指数据(bfData, CStr(vsId)) Then     '如果有数据
     '返回数据格式：选项，指数，概率，返还率，价位，概率，返还率，成交量

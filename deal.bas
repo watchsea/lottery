@@ -57,7 +57,7 @@ Dim tloc As Long      '总的数据循环次数
 
 '定义赛事信息
 Dim league        '联赛
-Dim currDate      '赛事日期
+Dim currdate      '赛事日期
 Dim vsInfo        '对阵信息
 Dim priTeam       '主队
 Dim secTeam       '客队
@@ -574,6 +574,12 @@ End Sub
 
 
 Sub 数据更新(ByRef control As Office.IRibbonControl)
+
+    Call 数据更新实现
+
+End Sub
+
+Sub 数据更新实现(Optional hisFlag As Boolean = False)
 '******************************************************************************************
 '
 '即时值更新，前一个即时值移入即时值1，新进的数据写入到即时值2
@@ -624,7 +630,7 @@ Dim tloc As Long      '总的数据循环次数
 
 '定义赛事信息
 Dim league        '联赛
-Dim currDate      '赛事日期
+Dim currdate      '赛事日期
 Dim vsInfo        '对阵信息
 Dim priTeam       '主队
 Dim secTeam       '客队
@@ -709,7 +715,11 @@ isCollectOknet = CBool(Dict.Item("IS_COLLECT_OKNET"))
 
 '将综合数据加载入内存
 
-Call 综合数据载入内存(data, "综合数据", dealRecCount, dataBgCol)
+If hisFlag Then
+    Call 指定日期综合数据载入(data)
+Else
+    Call 综合数据载入内存(data, "综合数据", dealRecCount, dataBgCol)
+End If
 tloc = UBound(data)
 
 
@@ -801,7 +811,7 @@ Do While j <= tloc
     '移动指针
     If data(j, 6) = "即时值2" Then
         league = data(j, 7)       '联赛
-        currDate = data(j, 1)   '赛事日期
+        currdate = data(j, 1)   '赛事日期
         vsInfo = data(j, 5)        '对阵信息
         priTeam = data(j, 3)      '主队
         secTeam = data(j, 4)     '客队
@@ -812,7 +822,7 @@ Do While j <= tloc
         
          '威廉希尔
         If UBound(dataW) > 0 Then
-            If currDate >= dataW(1, 2) Then     '小于最起始的时间直接跳过
+            If currdate >= dataW(1, 2) Then     '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataW)
                     'If currDate = dataW(k, 2) And vsInfo = dataW(k, 6) And league = dataW(k, 1) Then '日期，对阵，联赛
                     If vsId = dataW(k, 0) Then   '直接比较球赛ID号
@@ -837,7 +847,7 @@ Do While j <= tloc
         
         'Bet365
         If UBound(dataB) > 0 Then
-             If currDate >= dataB(1, 2) Then     '小于最起始的时间直接跳过
+             If currdate >= dataB(1, 2) Then     '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataB)
                     'If currDate = dataB(k, 2) And vsInfo = dataB(k, 6) And league = dataB(k, 1) Then '日期，对阵，联赛
                     If vsId = dataB(k, 0) Then   '直接比较球赛ID号
@@ -853,7 +863,7 @@ Do While j <= tloc
         
         '澳门彩票
         If UBound(dataM) > 0 Then
-            If currDate >= dataM(1, 2) Then     '小于最起始的时间直接跳过
+            If currdate >= dataM(1, 2) Then     '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataM)
                     'If currDate = dataM(k, 2) And vsInfo = dataM(k, 6) And league = dataM(k, 1) Then '日期，对阵，联赛
                     If vsId = dataM(k, 0) Then   '直接比较球赛ID号
@@ -870,7 +880,7 @@ Do While j <= tloc
         
         '立博(英国)
         If UBound(dataL) > 0 Then
-            If currDate >= dataL(1, 2) Then     '小于最起始的时间直接跳过
+            If currdate >= dataL(1, 2) Then     '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataL)
                     'If currDate = dataL(k, 2) And vsInfo = dataL(k, 6) And league = dataL(k, 1) Then '日期，对阵，联赛
                     If vsId = dataL(k, 0) Then   '直接比较球赛ID号
@@ -887,7 +897,7 @@ Do While j <= tloc
         
         '易胜博
         If UBound(dataE) > 0 Then
-            If currDate >= dataE(1, 2) Then     '小于最起始的时间直接跳过
+            If currdate >= dataE(1, 2) Then     '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataE)
                     'If currDate = dataE(k, 2) And vsInfo = dataE(k, 6) And league = dataE(k, 1) Then '日期，对阵，联赛
                     If vsId = dataE(k, 0) Then   '直接比较球赛ID号
@@ -936,9 +946,9 @@ Do While j <= tloc
         
         '中国竞彩网
         If UBound(dataJ) > 0 Then
-            If currDate >= dataJ(1, 1) Then    '小于最起始的时间直接跳过
+            If currdate >= dataJ(1, 1) Then    '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataJ)
-                    If currDate = dataJ(k, 1) And (priTeam = dataJ(k, 4) Or secTeam = dataJ(k, 5)) And (league = dataJ(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
+                    If currdate = dataJ(k, 1) And (priTeam = dataJ(k, 4) Or secTeam = dataJ(k, 5)) And (league = dataJ(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
                         Exit For
                     End If
                 Next
@@ -958,9 +968,9 @@ Do While j <= tloc
         
         '中国竞彩网比分
         If UBound(dataJBf) > 0 Then
-            If currDate >= dataJBf(1, 1) Then    '小于最起始的时间直接跳过
+            If currdate >= dataJBf(1, 1) Then    '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataJBf)
-                    If currDate = dataJBf(k, 1) And (priTeam = dataJBf(k, 4) Or secTeam = dataJBf(k, 5)) And (league = dataJBf(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
+                    If currdate = dataJBf(k, 1) And (priTeam = dataJBf(k, 4) Or secTeam = dataJBf(k, 5)) And (league = dataJBf(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
                         Exit For
                     End If
                 Next
@@ -974,9 +984,9 @@ Do While j <= tloc
         
         '中国竞彩网总进球
         If UBound(dataJZjq) > 0 Then
-            If currDate >= dataJZjq(1, 1) Then    '小于最起始的时间直接跳过
+            If currdate >= dataJZjq(1, 1) Then    '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataJZjq)
-                    If currDate = dataJZjq(k, 1) And (priTeam = dataJZjq(k, 4) Or secTeam = dataJZjq(k, 5)) And (league = dataJZjq(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
+                    If currdate = dataJZjq(k, 1) And (priTeam = dataJZjq(k, 4) Or secTeam = dataJZjq(k, 5)) And (league = dataJZjq(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
                         Exit For
                     End If
                 Next
@@ -990,9 +1000,9 @@ Do While j <= tloc
         
         '中国竞彩网半全场胜平负
         If UBound(dataJBqc) > 0 Then
-            If currDate >= dataJBqc(1, 1) Then    '小于最起始的时间直接跳过
+            If currdate >= dataJBqc(1, 1) Then    '小于最起始的时间直接跳过
                 For k = 1 To UBound(dataJBqc)
-                    If currDate = dataJBqc(k, 1) And (priTeam = dataJBqc(k, 4) Or secTeam = dataJBqc(k, 5)) And (league = dataJBqc(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
+                    If currdate = dataJBqc(k, 1) And (priTeam = dataJBqc(k, 4) Or secTeam = dataJBqc(k, 5)) And (league = dataJBqc(k, 3) Or InStr(league, "预选") > 0) Then '日期，主队，客队，联赛
                         Exit For
                     End If
                 Next
@@ -1008,7 +1018,7 @@ Do While j <= tloc
         '**************************************************************************************
         
         If UBound(dataW) > 0 Then
-             If currDate >= dataW(1, 2) Then     '小于最起始的时间直接跳过,由于此数据依附于dataW
+             If currdate >= dataW(1, 2) Then     '小于最起始的时间直接跳过,由于此数据依附于dataW
                   '平均赔率1
                   For k = 1 To UBound(dataL12)
                       If vsId = dataL12(k, 0) Then 'ID相等
@@ -1087,11 +1097,11 @@ Do While j <= tloc
         
         
         If UBound(dataKL) > 0 Then
-            If currDate >= dataKL(1, 2) Then     '小于最起始的时间直接跳过
+            If currdate >= dataKL(1, 2) Then     '小于最起始的时间直接跳过
             
                 'OkBf1、Okbf2 ---澳客网必发盈亏
                 For k = 1 To UBound(dataBF)
-                    If currDate = dataBF(k, 2) And (InStr(priTeam, dataBF(k, 4)) > 0 Or InStr(secTeam, dataBF(k, 5)) > 0) And league = dataBF(k, 1) Then '日期，对阵，联赛
+                    If currdate = dataBF(k, 2) And (InStr(priTeam, dataBF(k, 4)) > 0 Or InStr(secTeam, dataBF(k, 5)) > 0) And league = dataBF(k, 1) Then '日期，对阵，联赛
                         Exit For
                     End If
                 Next
@@ -1104,7 +1114,7 @@ Do While j <= tloc
                     '2016.5.18, 在配置中删除了三项，因此位置由21-34，调整为18-31。
                     '2016.8.12, 在config页中增加“启用标志”列
                     For k1 = 2 To UBound(dataConfig)
-                        If dataColDict.exists(dataConfig(k1, 2)) And dataConfig(k1, 15) = "Y" Then
+                        If dataColDict.exists(dataConfig(k1, 2)) And dataConfig(k1, 15) = "Y" And dataConfig(k1, 16) = "" Then
                             dataBgCol = dataColDict.Item(dataConfig(k1, 2))
                             initialBgCol = dataConfig(k1, 4)
                             realBgCol = dataConfig(k1, 5)
@@ -1116,7 +1126,7 @@ Do While j <= tloc
             
                 'Ok30 ---澳客网胜负数据
                 For k = 1 To UBound(dataSF)
-                    If currDate = dataSF(k, 2) And (InStr(priTeam, dataSF(k, 4)) > 0 Or InStr(secTeam, dataSF(k, 5)) > 0) And league = dataSF(k, 1) Then '日期，对阵，联赛
+                    If currdate = dataSF(k, 2) And (InStr(priTeam, dataSF(k, 4)) > 0 Or InStr(secTeam, dataSF(k, 5)) > 0) And league = dataSF(k, 1) Then '日期，对阵，联赛
                         Exit For
                     End If
                 Next
@@ -1132,7 +1142,7 @@ Do While j <= tloc
                 
     
                 For k = 1 To UBound(dataKL)
-                    If currDate = dataKL(k, 2) And (InStr(priTeam, dataKL(k, 4)) > 0 Or InStr(secTeam, dataKL(k, 5)) > 0) And league = dataKL(k, 1) Then  '日期，对阵，联赛
+                    If currdate = dataKL(k, 2) And (InStr(priTeam, dataKL(k, 4)) > 0 Or InStr(secTeam, dataKL(k, 5)) > 0) And league = dataKL(k, 1) Then  '日期，对阵，联赛
                         Exit For
                     End If
                 Next
@@ -1166,7 +1176,7 @@ Do While j <= tloc
                 '澳客网盘口评测
                 '-------------------------------
                 For k = 1 To UBound(dataPK)
-                    If currDate = dataPK(k, 2) And (InStr(priTeam, dataPK(k, 4)) > 0 Or InStr(secTeam, dataPK(k, 5)) > 0) And league = dataPK(k, 1) Then '日期，对阵，联赛
+                    If currdate = dataPK(k, 2) And (InStr(priTeam, dataPK(k, 4)) > 0 Or InStr(secTeam, dataPK(k, 5)) > 0) And league = dataPK(k, 1) Then '日期，对阵，联赛
                         Exit For
                     End If
                 Next
@@ -1215,7 +1225,7 @@ Do While j <= tloc
                 
                 'Ok30 ---更新竞彩期数
                 For k = 1 To UBound(dataOK)
-                    If currDate = dataOK(k, 2) And (InStr(priTeam, dataOK(k, 4)) > 0 Or InStr(secTeam, dataOK(k, 5)) > 0) And league = dataOK(k, 1) Then '日期，对阵，联赛
+                    If currdate = dataOK(k, 2) And (InStr(priTeam, dataOK(k, 4)) > 0 Or InStr(secTeam, dataOK(k, 5)) > 0) And league = dataOK(k, 1) Then '日期，对阵，联赛
                         Exit For
                     End If
                 Next
@@ -1235,8 +1245,11 @@ Do While j <= tloc
         Call 排名分析(dataSheet, Loc, dataColDict, tmClDict, clStrDict, league)
         Call 主客队排名分析(dataSheet, Loc, dataColDict, tmClDict, clStrDict, league)
         
-        
-        j = j + 3
+        If hisFlag Then
+            j = j + 1
+        Else
+            j = j + 3
+        End If
     Else
         j = j + 1
     End If
@@ -2299,7 +2312,7 @@ Dim str1 As String
 Dim str2 As String
 Dim str3
 Dim str4
-Dim currDate
+Dim currdate
 Dim data()
 Dim jcdata()
 

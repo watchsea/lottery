@@ -7,6 +7,88 @@ Option Explicit
 #End If
 
 Sub 历史数据加载(ByRef control As Office.IRibbonControl)
+    Call 历史数据载入OZ
+End Sub
+
+Sub 历史数据载入OZ()
+    Call 球探网BF成交载入(True)
+    Call 球探网亚指数据载入(True)
+    Call 数据更新实现(True)
+End Sub
+
+
+
+Sub 指定日期综合数据载入(datas, Optional dataType As String = "即时值2", Optional bgCol As Long = 5)
+'------------------------------------------------------------------------
+'dataArr：数据存储的数组
+'sheetName：读取的SHEET页名称
+'dataFlag:载入的数据类型  “初始值，即时值1，即时值2"
+'bgCol：开始读取的数据行，默认从第一个数据开始（Sheet中的第四行）
+'------------------------------------------------------------------------
+Dim wkSheet As Worksheet
+Dim cnt As Long
+Dim Loc As Long
+Dim i As Long
+Dim j As Long
+Dim itemId
+Dim dataArr
+
+
+Dim begindate As Date
+Dim enddate As Date
+Dim currdate As Date
+
+
+Call 初始化字典(Dict, "Param")
+Call 初始化字典(leagueDict, "01赛事")
+
+begindate = CDate(Dict.Item("BEGIN_DATE"))
+enddate = CDate(Dict.Item("END_DATE"))
+If begindate > enddate Then
+    MsgBox ("开始日期大于结束日期,请重新输入！")
+    Exit Sub
+End If
+
+Set wkSheet = ActiveWorkbook.Sheets("综合数据")
+cnt = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
+ReDim dataArr(cnt - 1, 8)
+'将数据取到内存数组中
+
+i = bgCol
+Loc = 1
+Do
+    currdate = CDate(wkSheet.Cells(i, 1))   '取日期
+    If currdate >= begindate And currdate <= enddate Then
+        If wkSheet.Cells(i, 1) <> "" And wkSheet.Cells(i, 6) = dataType Then
+            dataArr(Loc, 0) = i     '保存数据在sheet中对应的行号
+            dataArr(Loc, 1) = wkSheet.Cells(i, 1) '日期
+            dataArr(Loc, 2) = CDate(wkSheet.Cells(i, 2)) '时间
+            dataArr(Loc, 3) = wkSheet.Cells(i, 3) '主队
+            dataArr(Loc, 4) = wkSheet.Cells(i, 4)  '客队
+            dataArr(Loc, 5) = wkSheet.Cells(i, 5)  '对阵
+            dataArr(Loc, 6) = wkSheet.Cells(i, 6)  '数据类型
+            dataArr(Loc, 7) = wkSheet.Cells(i, 7) '联赛
+            dataArr(Loc, 8) = wkSheet.Cells(i, 9) '球探网赛事ID
+            
+            '指针移位
+            Loc = Loc + 1
+        End If
+    End If
+    i = i + 1
+Loop Until currdate > enddate
+ReDim datas(Loc - 1, 8)
+'数据移植至输出数组
+For i = 1 To Loc - 1
+    For j = 0 To 8
+        datas(i, j) = dataArr(i, j)
+    Next
+Next
+Set wkSheet = Nothing
+End Sub
+
+
+
+Sub 历史数据载入1()
     Dim begindate As Date
     Dim enddate As Date
     
@@ -41,8 +123,6 @@ Sub 历史数据加载(ByRef control As Office.IRibbonControl)
     End If
 
 End Sub
-
-
 
 Function 球探网历史数据载入(sheetName As String, ids, begindate As Date, enddate As Date)
 '------------------------------------------------------------------

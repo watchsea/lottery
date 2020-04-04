@@ -296,7 +296,7 @@ Dim i As Long
 Dim j As Long
 Dim itemId
 Dim dataArr
-Dim currDate
+Dim currdate
 
 
 Dim leagueData()
@@ -963,7 +963,7 @@ Dim i As Long
 Dim j As Long
 Dim itemId
 Dim dataArr
-Dim currDate
+Dim currdate
 
 
 Dim colCnt As Long   '要加载的数据列总数
@@ -1111,7 +1111,7 @@ Dim i As Long
 Dim j As Long
 Dim itemId
 Dim dataArr
-Dim currDate
+Dim currdate
 
 
 Dim colCnt As Long   '要加载的数据列总数
@@ -1180,7 +1180,7 @@ Dim i As Long
 Dim j As Long
 Dim itemId
 Dim dataArr
-Dim currDate
+Dim currdate
 
 
 Dim colCnt As Long   '要加载的数据列总数
@@ -1249,7 +1249,7 @@ Dim i As Long
 Dim j As Long
 Dim itemId
 Dim dataArr
-Dim currDate
+Dim currdate
 
 
 Dim colCnt As Long   '要加载的数据列总数
