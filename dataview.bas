@@ -1,5 +1,5 @@
-Attribute VB_Name = "dataview"
-Sub ²é¿´µ±ÆÚÊı¾İ(ByRef control As Office.IRibbonControl)
+ï»¿Attribute VB_Name = "dataview"
+Sub æŸ¥çœ‹å½“æœŸæ•°æ®(ByRef control As Office.IRibbonControl)
     Dim wkSheet As Worksheet
     Dim pasteSheet As Worksheet
     Dim cnt As Long
@@ -10,23 +10,23 @@ Sub ²é¿´µ±ÆÚÊı¾İ(ByRef control As Office.IRibbonControl)
     Dim ctrls As Object
     
     
-    Set wkSheet = ActiveWorkbook.Sheets("×ÛºÏÊı¾İ")
+    Set wkSheet = ActiveWorkbook.Sheets("ç»¼åˆæ•°æ®")
     cnt = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
     col = wkSheet.UsedRange.Columns(wkSheet.UsedRange.Columns.Count).Column
-    Set pasteSheet = ActiveWorkbook.Sheets("µ±ÆÚÊı¾İ")
+    Set pasteSheet = ActiveWorkbook.Sheets("å½“æœŸæ•°æ®")
     
     str = "=" + CStr(wkSheet.Cells(1, 9))
     
     
-    Call ³õÊ¼»¯Ò»°ã×Öµä(dataColDict, wkSheet, 4, 0, 1, False)
+    Call åˆå§‹åŒ–ä¸€èˆ¬å­—å…¸(dataColDict, wkSheet, 4, 0, 1, False)
     okid = CInt(dataColDict.Item("OKID"))
     
     
     mode = CStr(wkSheet.Cells(1, 2))
-    Set ctrls = Application.CommandBars("²ÊÆ±·ÖÎö").Controls
-        If ctrls(6).Caption = "²é¿´È«²¿Êı¾İ" Then
+    Set ctrls = Application.CommandBars("å½©ç¥¨åˆ†æ").Controls
+        If ctrls(6).Caption = "æŸ¥çœ‹å…¨éƒ¨æ•°æ®" Then
             wkSheet.Range(Cells(3, 1), Cells(cnt, col)).AutoFilter Field:=9
-            ctrls(6).Caption = "²é¿´¡¾" + CStr(wkSheet.Cells(1, 9)) + "¡¿ÆÚ"
+            ctrls(6).Caption = "æŸ¥çœ‹ã€" + CStr(wkSheet.Cells(1, 9)) + "ã€‘æœŸ"
             wkSheet.Range(Cells(3, 1), Cells(cnt, col)).AutoFilter Field:=okid
             wkSheet.Cells(cnt, 1).Select
         Else
@@ -37,31 +37,31 @@ Sub ²é¿´µ±ÆÚÊı¾İ(ByRef control As Office.IRibbonControl)
                 'pasteSheet.[a2]
             End With
             'pasteSheet.Range("A2").PasteSpecial
-            ctrls(6).Caption = "²é¿´È«²¿Êı¾İ"
-            Call ´¦Àíµ±ÆÚÊı¾İ
+            ctrls(6).Caption = "æŸ¥çœ‹å…¨éƒ¨æ•°æ®"
+            Call å¤„ç†å½“æœŸæ•°æ®
         End If
     Set wkSheet = Nothing
     Set pasteSheet = Nothing
     
 End Sub
 
-Sub ²é¿´È«²¿ĞÅÏ¢(ByRef control As Office.IRibbonControl)
+Sub æŸ¥çœ‹å…¨éƒ¨ä¿¡æ¯(ByRef control As Office.IRibbonControl)
 Dim wkSheet As Worksheet
 Dim cnt, col
 Dim ctrls As Object
 
-Set wkSheet = ActiveWorkbook.Sheets("×ÛºÏÊı¾İ")
+Set wkSheet = ActiveWorkbook.Sheets("ç»¼åˆæ•°æ®")
 cnt = wkSheet.UsedRange.Rows(wkSheet.UsedRange.Rows.Count).row
 col = wkSheet.UsedRange.Columns(wkSheet.UsedRange.Columns.Count).Column
 
-Set ctrls = Application.CommandBars("²ÊÆ±·ÖÎö").Controls
-If ctrls(7).Caption = "²é¿´ÈüÊÂĞÅÏ¢" Then
-    Call ÏÔÊ¾É¸Ñ¡È«¼¯Êı¾İ
-    ctrls(7).Caption = "²é¿´È«²¿ÈüÊÂ"
+Set ctrls = Application.CommandBars("å½©ç¥¨åˆ†æ").Controls
+If ctrls(7).Caption = "æŸ¥çœ‹èµ›äº‹ä¿¡æ¯" Then
+    Call æ˜¾ç¤ºç­›é€‰å…¨é›†æ•°æ®
+    ctrls(7).Caption = "æŸ¥çœ‹å…¨éƒ¨èµ›äº‹"
 
 Else
     wkSheet.Range(Cells(3, 1), Cells(cnt, col)).AutoFilter Field:=9
-    ctrls(7).Caption = "²é¿´ÈüÊÂĞÅÏ¢"
+    ctrls(7).Caption = "æŸ¥çœ‹èµ›äº‹ä¿¡æ¯"
     wkSheet.Cells(cnt, 1).Select
 End If
 End Sub

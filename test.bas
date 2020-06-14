@@ -698,5 +698,5 @@ End Sub
 
 Sub 测试积分数据导入()
     Call 初始化字典(leagueDict, "01赛事")
-    Call 球探网BF成交载入
+    Call 球探网赛事积分数据载入
 End Sub

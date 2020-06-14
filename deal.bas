@@ -378,7 +378,7 @@ Call 加载竞彩网半全场胜平负数据(dataJBqc, "竞彩网半全场")
 
              '2015.9.13，add 32,33,34配置
              For k1 = 2 To UBound(dataConfig)
-                If dataColDict.exists(dataConfig(k1, 2)) And dataConfig(k1, 15) = "Y" Then
+                If dataColDict.exists(dataConfig(k1, 2)) And dataConfig(k1, 15) = "Y" And dataConfig(k1, 16) = "" Then
                     dataBgCol = dataColDict.Item(dataConfig(k1, 2))
                     initialBgCol = dataConfig(k1, 4)
                     realBgCol = dataConfig(k1, 5)

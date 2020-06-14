@@ -7,7 +7,7 @@ Option Explicit
 #End If
 
 Sub 历史数据加载(ByRef control As Office.IRibbonControl)
-    Call 历史数据载入OZ
+    Call 历史数据载入1
 End Sub
 
 Sub 历史数据载入OZ()
@@ -112,6 +112,7 @@ Sub 历史数据载入1()
         
         Call 球探网BF数据载入
         Call 球探网赛事积分数据载入
+        Call 球探网亚指数据载入
         
         Call 澳客网必发盈亏(begindate, enddate)
         Call 澳客网胜负指数(begindate, enddate)

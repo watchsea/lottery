@@ -680,6 +680,10 @@ End With
 'Application.ScreenUpdating = False
 
 Set tt = doc.getElementById("analy_BetfaStandard")
+
+If tt Is Nothing Then
+    Set tt = doc.getElementById("porlet_3").ChildNodes(1)
+End If
 tt1 = "<TABLE>" + tt.innerHTML + "</TABLE>"
 
 
@@ -1197,13 +1201,14 @@ ReDim dataAvg(103)   '0-43,主队积分信息，44-87：客队积分信息，
     For cnt = 0 To tables.Length - 1
         Set table = tables(cnt)
         '主队情况：主队全场数据，保存：总、主、客、近6
-        If table.Rows.Length = 6 And InStr(table.Rows(0).innerText, priTeam) > 0 And InStr(table.Rows(0).innerText, secTeam) = 0 Then
-        
-            For i = 2 To table.Rows.Length - 1
-               For j = 0 To colCnt
-                data1(i - 2, j) = table.Rows(i).Cells(j).innerText
-               Next
-            Next
+        If table.Rows.Length = 6 And InStr(table.Rows(0).innerText, secTeam) = 0 Then
+           If InStr(table.Rows(0).innerText, priTeam) > 0 Or InStr(priTeam, table.Rows(0).innerText) > 0 Then
+                For i = 2 To table.Rows.Length - 1
+                   For j = 0 To colCnt
+                    data1(i - 2, j) = table.Rows(i).Cells(j).innerText
+                   Next
+                Next
+            End If
         End If
         
         '客队情况：客队全场数据，保存：总、主、客、近6
@@ -1244,7 +1249,7 @@ ReDim dataAvg(103)   '0-43,主队积分信息，44-87：客队积分信息，
                        dataAvg(94) = tt.Rows.Item(i + 1).Cells(6).innerText
                        'dataAvg(95) = tt.Rows.Item(i + 1).Cells(7).innerText
                        
-                   ElseIf InStr(tt3, "澳门") > 0 Then
+                   ElseIf InStr(tt3, "澳门") > 0 Or InStr(tt3, "澳彩") > 0 Then
                        dataAvg(96) = tt.Rows.Item(i).Cells(5).innerText
                        dataAvg(97) = tt.Rows.Item(i).Cells(6).innerText
                        dataAvg(98) = tt.Rows.Item(i).Cells(7).innerText

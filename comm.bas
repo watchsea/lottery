@@ -1,22 +1,22 @@
-Attribute VB_Name = "comm"
-Public Dict As Object   'Êı¾İ²ÎÊı×Öµä
-Public leagueDict As Object   'ÁªÈü×Öµä
-Public dataColDict As Object 'Êı¾İ´æ·ÅÎ»ÖÃ×Öµä
-Public teamUniDict As Object   'Çò¶ÓÍ³Ò»×Öµä
+ï»¿Attribute VB_Name = "comm"
+Public Dict As Object   'æ•°æ®å‚æ•°å­—å…¸
+Public leagueDict As Object   'è”èµ›å­—å…¸
+Public dataColDict As Object 'æ•°æ®å­˜æ”¾ä½ç½®å­—å…¸
+Public teamUniDict As Object   'çƒé˜Ÿç»Ÿä¸€å­—å…¸
 
 
-Sub ³õÊ¼»¯Ò»°ã×Öµä(tempDict As Object, paraSheet As Worksheet, idCol As Long, valCol As Long, Optional bgRow As Long = 1, Optional ColOrRow As Boolean = True)
-'¶ÔÖ¸¶¨SHEETÒ³ÖĞµÄµÄÖ¸¶¨Á½ÁĞÊı¾İĞÎ³É×Öµä
-'idCol:  ColOrRowÎªtrueÊ±£¬Ö÷¼üËùÔÚÁĞ£»ÎªfalseÊ±£¬Ö÷¼üËùÔÚµÄĞĞ
-'valCol£º ColOrRowÎªtrueÊ±£¬Ö÷¼üÖµËùÔÚÁĞ£¬Èç¹ûvalColÎª0£¬ÔòÌîĞĞºÅ£»ÈôÎªfalseÊ±£¬Ö÷¼üÖµËùÔÚĞĞ£¬Èç¹ûvalColÎª0£¬ÔòÌîÈëÁĞºÅ
-'bgRow£ºÊı¾İÆğÊ¼ĞĞ
-'ColOrRow:°´ĞĞ»¹ÊÇÁĞÀ´×éÖ¯×Öµä,Ä¬ÈÏÎªtrue,°´ÁĞ½øĞĞ×éÖ¯; false£º°´ĞĞÀ´×éÖ¯
+Sub åˆå§‹åŒ–ä¸€èˆ¬å­—å…¸(tempDict As Object, paraSheet As Worksheet, idCol As Long, valCol As Long, Optional bgRow As Long = 1, Optional ColOrRow As Boolean = True)
+'å¯¹æŒ‡å®šSHEETé¡µä¸­çš„çš„æŒ‡å®šä¸¤åˆ—æ•°æ®å½¢æˆå­—å…¸
+'idCol:  ColOrRowä¸ºtrueæ—¶ï¼Œä¸»é”®æ‰€åœ¨åˆ—ï¼›ä¸ºfalseæ—¶ï¼Œä¸»é”®æ‰€åœ¨çš„è¡Œ
+'valColï¼š ColOrRowä¸ºtrueæ—¶ï¼Œä¸»é”®å€¼æ‰€åœ¨åˆ—ï¼Œå¦‚æœvalColä¸º0ï¼Œåˆ™å¡«è¡Œå·ï¼›è‹¥ä¸ºfalseæ—¶ï¼Œä¸»é”®å€¼æ‰€åœ¨è¡Œï¼Œå¦‚æœvalColä¸º0ï¼Œåˆ™å¡«å…¥åˆ—å·
+'bgRowï¼šæ•°æ®èµ·å§‹è¡Œ
+'ColOrRow:æŒ‰è¡Œè¿˜æ˜¯åˆ—æ¥ç»„ç»‡å­—å…¸,é»˜è®¤ä¸ºtrue,æŒ‰åˆ—è¿›è¡Œç»„ç»‡; falseï¼šæŒ‰è¡Œæ¥ç»„ç»‡
 
 Dim itemId, itemVal
 Dim dcnt
 Dim cnt
 
-On Error Resume Next  'Óöµ½´íÎó¼ÌĞøÖ´ĞĞÏÂÒ»ĞĞ
+On Error Resume Next  'é‡åˆ°é”™è¯¯ç»§ç»­æ‰§è¡Œä¸‹ä¸€è¡Œ
 dcnt = tempDict.Count
 If IsEmpty(dcnt) Then
     Set tempDict = CreateObject("Scripting.Dictionary")
@@ -26,15 +26,15 @@ End If
 'Set paraSheet = ThisWorkbook.Sheets(sheetName)
 
 
-'³õÊ¼»¯²ÎÊı
+'åˆå§‹åŒ–å‚æ•°
 If ColOrRow Then
     cnt = paraSheet.UsedRange.Rows(paraSheet.UsedRange.Rows.Count).row
     For i = bgRow To cnt
         If paraSheet.Cells(i, idCol) <> "" Then
             itemId = paraSheet.Cells(i, idCol).Value
-            If valCol > 0 Then    '×ÖµäÏîµÄÖµÁĞºÅ´óÓÚ£¬´Ó¶ÔÓ¦ÓÚÁĞÖĞÈ¡Öµ
+            If valCol > 0 Then    'å­—å…¸é¡¹çš„å€¼åˆ—å·å¤§äºï¼Œä»å¯¹åº”äºåˆ—ä¸­å–å€¼
                 itemVal = CStr(paraSheet.Cells(i, valCol).Value)
-            Else                 '×ÖµäÏîµÄÖµÁĞºÅĞ¡ÓÚµÈÓÚ0£¬ÔòÌîÈë¶ÔÓ¦ĞĞºÅ
+            Else                 'å­—å…¸é¡¹çš„å€¼åˆ—å·å°äºç­‰äº0ï¼Œåˆ™å¡«å…¥å¯¹åº”è¡Œå·
                 itemVal = i
             End If
             
@@ -46,14 +46,14 @@ If ColOrRow Then
         End If
     Next
 Else
-    '°´ĞĞ½øĞĞ×éÖ¯£¬Ä³Ò»ĞĞµÄÊı¾İÎªÖ÷¼ü£¬ÁíÒ»ĞĞµÄÊı¾İÎª¼üÖµ
+    'æŒ‰è¡Œè¿›è¡Œç»„ç»‡ï¼ŒæŸä¸€è¡Œçš„æ•°æ®ä¸ºä¸»é”®ï¼Œå¦ä¸€è¡Œçš„æ•°æ®ä¸ºé”®å€¼
     cnt = paraSheet.UsedRange.Columns(paraSheet.UsedRange.Columns.Count).Column
     For i = bgRow To cnt
         If paraSheet.Cells(idCol, i) <> "" Then
             itemId = paraSheet.Cells(idCol, i).Value
-            If valCol > 0 Then    '×ÖµäÏîµÄÖµÁĞºÅ´óÓÚ£¬´Ó¶ÔÓ¦ÓÚÁĞÖĞÈ¡Öµ
+            If valCol > 0 Then    'å­—å…¸é¡¹çš„å€¼åˆ—å·å¤§äºï¼Œä»å¯¹åº”äºåˆ—ä¸­å–å€¼
                 itemVal = CStr(paraSheet.Cells(valCol, i).Value)
-            Else                 '×ÖµäÏîµÄÖµÁĞºÅĞ¡ÓÚµÈÓÚ0£¬ÔòÌîÈë¶ÔÓ¦ĞĞºÅ
+            Else                 'å­—å…¸é¡¹çš„å€¼åˆ—å·å°äºç­‰äº0ï¼Œåˆ™å¡«å…¥å¯¹åº”è¡Œå·
                 itemVal = i
             End If
             
@@ -71,21 +71,21 @@ End Sub
 
 
 
-Sub ³õÊ¼»¯×Öµä(tempDict As Object, sheetName As String, Optional bgRow As Long = 2, Optional keyCol As Integer = 1, Optional valCol As Integer = 3)
+Sub åˆå§‹åŒ–å­—å…¸(tempDict As Object, sheetName As String, Optional bgRow As Long = 2, Optional keyCol As Integer = 1, Optional valCol As Integer = 3)
 '--------------------------------------------------------
-'²ÎÊı£º
-'     tempDict£º´ı½¨Á¢µÄ×Öµä
-'     sheetName£ºÊı¾İ±£´æµÄÒ³ÃæÃû³Æ
-'     bgRow£º    Êı¾İÒ³ÖĞÊı¾İÆğÊ¼ĞĞ
-'     keyCol£º   Ö÷¼üËùÔÚµÄÁĞºÅ
-'     valCol£º   ¼üÖµËùÔÚµÄÁĞºÅ
-'     add by ljqu 2016.5.8,  Ôö¼Ó²ÎÊı bgRow,keyCol,valCol
+'å‚æ•°ï¼š
+'     tempDictï¼šå¾…å»ºç«‹çš„å­—å…¸
+'     sheetNameï¼šæ•°æ®ä¿å­˜çš„é¡µé¢åç§°
+'     bgRowï¼š    æ•°æ®é¡µä¸­æ•°æ®èµ·å§‹è¡Œ
+'     keyColï¼š   ä¸»é”®æ‰€åœ¨çš„åˆ—å·
+'     valColï¼š   é”®å€¼æ‰€åœ¨çš„åˆ—å·
+'     add by ljqu 2016.5.8,  å¢åŠ å‚æ•° bgRow,keyCol,valCol
 '-------------------------------------------------------
 Dim itemId, itemVal
 Dim dcnt
 Dim cnt
 
-On Error Resume Next  'Óöµ½´íÎó¼ÌĞøÖ´ĞĞÏÂÒ»ĞĞ
+On Error Resume Next  'é‡åˆ°é”™è¯¯ç»§ç»­æ‰§è¡Œä¸‹ä¸€è¡Œ
 dcnt = tempDict.Count
 If IsEmpty(dcnt) Then
     Set tempDict = CreateObject("Scripting.Dictionary")
@@ -95,7 +95,7 @@ End If
 Set paraSheet = ActiveWorkbook.Sheets(sheetName)
 
 
-'³õÊ¼»¯²ÎÊı
+'åˆå§‹åŒ–å‚æ•°
 
 cnt = paraSheet.UsedRange.Rows(paraSheet.UsedRange.Rows.Count).row
 For i = bgRow To cnt
@@ -113,12 +113,12 @@ Next
 End Sub
 
 
-Function ÔØÈë×ÛºÏÊı¾İ×Öµä(tempDict As Object, dataArr, col1 As Integer, col2 As Integer, Optional dataType As String = "³õÊ¼Öµ")
+Function è½½å…¥ç»¼åˆæ•°æ®å­—å…¸(tempDict As Object, dataArr, col1 As Integer, col2 As Integer, Optional dataType As String = "åˆå§‹å€¼")
 '------------------------------------------------------------
-' tempDict ±£´æÊı¾İµÄ×Öµä
-' dataArr  ÓÃÓÚ»ñÈ¡×ÖµäÊı¾İµÄÊı×é
-' col1     ×Öµä±êÊ¶¶ÔÓ¦µÄÊı¾İÁĞ
-' col2     ×ÖµäÖµ¶ÔÓ¦µÄÊı¾İÁĞ
+' tempDict ä¿å­˜æ•°æ®çš„å­—å…¸
+' dataArr  ç”¨äºè·å–å­—å…¸æ•°æ®çš„æ•°ç»„
+' col1     å­—å…¸æ ‡è¯†å¯¹åº”çš„æ•°æ®åˆ—
+' col2     å­—å…¸å€¼å¯¹åº”çš„æ•°æ®åˆ—
 ' dataType :
 '------------------------------------------------------------
 Dim itemId, itemVal
@@ -128,7 +128,7 @@ Dim cnt
 
 
 
-On Error Resume Next  'Óöµ½´íÎó¼ÌĞøÖ´ĞĞÏÂÒ»ĞĞ
+On Error Resume Next  'é‡åˆ°é”™è¯¯ç»§ç»­æ‰§è¡Œä¸‹ä¸€è¡Œ
 dcnt = tempDict.Count
 If IsEmpty(dcnt) Then
     Set tempDict = CreateObject("Scripting.Dictionary")
@@ -148,28 +148,28 @@ If IsArray(dataArr) Then
             End If
         End If
     Next
-    ÔØÈë×ÛºÏÊı¾İ×Öµä = True
+    è½½å…¥ç»¼åˆæ•°æ®å­—å…¸ = True
 Else
-    ÔØÈë×ÛºÏÊı¾İ×Öµä = False
+    è½½å…¥ç»¼åˆæ•°æ®å­—å…¸ = False
 End If
 End Function
 
 
 
 
-Function BytesToBstr(strBody, CodeBase)         'Ê¹ÓÃAdodb.Stream¶ÔÏóÌáÈ¡×Ö·û´®
+Function BytesToBstr(strBody, CodeBase)         'ä½¿ç”¨Adodb.Streamå¯¹è±¡æå–å­—ç¬¦ä¸²
     Dim objStream
     On Error Resume Next
     Set objStream = CreateObject("Adodb.Stream")
     With objStream
-        .Type = 1                               '¶ş½øÖÆ
-        .mode = 3                               '¶ÁĞ´
+        .Type = 1                               'äºŒè¿›åˆ¶
+        .mode = 3                               'è¯»å†™
         .Open
-        .Write strBody                          '¶ş½øÖÆÊı×éĞ´ÈëAdodb.Stream¶ÔÏóÄÚ²¿
-        .Position = 0                           'Î»ÖÃÆğÊ¼Îª0
-        .Type = 2                               '×Ö·û´®
-        .Charset = CodeBase                     'Êı¾İµÄ±àÂë¸ñÊ½
-        BytesToBstr = .ReadText                 'µÃµ½×Ö·û´®
+        .Write strBody                          'äºŒè¿›åˆ¶æ•°ç»„å†™å…¥Adodb.Streamå¯¹è±¡å†…éƒ¨
+        .Position = 0                           'ä½ç½®èµ·å§‹ä¸º0
+        .Type = 2                               'å­—ç¬¦ä¸²
+        .Charset = CodeBase                     'æ•°æ®çš„ç¼–ç æ ¼å¼
+        BytesToBstr = .ReadText                 'å¾—åˆ°å­—ç¬¦ä¸²
     End With
     objStream.Close
     Set objStream = Nothing
@@ -178,7 +178,7 @@ Function BytesToBstr(strBody, CodeBase)         'Ê¹ÓÃAdodb.Stream¶ÔÏóÌáÈ¡×Ö·û´®
 End Function
 
 
-'½«UTF-8×ª»»Îªºº×Ö£ºµ÷ÓÃJS
+'å°†UTF-8è½¬æ¢ä¸ºæ±‰å­—ï¼šè°ƒç”¨JS
 Function UTF8toChineseCharacters(szInput)
     Dim js As Object
     Set js = CreateObjectx86("MSScriptControl.ScriptControl")
@@ -187,7 +187,7 @@ Function UTF8toChineseCharacters(szInput)
     UTF8toChineseCharacters = js.eval("decode('" & szInput & "')")
 End Function
 
-'´ÓJSONÖĞÈ¡ÏîÄ¿Öµ
+'ä»JSONä¸­å–é¡¹ç›®å€¼
 Sub getItemfromJson(aa, bb As Object)
 Dim x
 Dim s
@@ -199,17 +199,17 @@ Dim s
      Set x = Nothing
 End Sub
 
-Sub ´ÓÊı×é¹¹½¨×Öµä(tempDict As Object, dataArr, idCol As Long, valCol As Long, Optional bgRow As Long = 1)
-'¶ÔÖ¸¶¨SHEETÒ³ÖĞµÄµÄÖ¸¶¨Á½ÁĞÊı¾İĞÎ³É×Öµä
-'idCol:  Ö÷¼üËùÔÚÁĞ£»
-'valCol£º Ö÷¼üÖµËùÔÚÁĞ£¬Èç¹ûvalColÎª0£¬ÔòÌîĞĞºÅ£»
-'bgRow£ºÊı¾İÆğÊ¼ĞĞ
+Sub ä»æ•°ç»„æ„å»ºå­—å…¸(tempDict As Object, dataArr, idCol As Long, valCol As Long, Optional bgRow As Long = 1)
+'å¯¹æŒ‡å®šSHEETé¡µä¸­çš„çš„æŒ‡å®šä¸¤åˆ—æ•°æ®å½¢æˆå­—å…¸
+'idCol:  ä¸»é”®æ‰€åœ¨åˆ—ï¼›
+'valColï¼š ä¸»é”®å€¼æ‰€åœ¨åˆ—ï¼Œå¦‚æœvalColä¸º0ï¼Œåˆ™å¡«è¡Œå·ï¼›
+'bgRowï¼šæ•°æ®èµ·å§‹è¡Œ
 
 Dim itemId, itemVal
 Dim dcnt
 Dim cnt
 
-On Error Resume Next  'Óöµ½´íÎó¼ÌĞøÖ´ĞĞÏÂÒ»ĞĞ
+On Error Resume Next  'é‡åˆ°é”™è¯¯ç»§ç»­æ‰§è¡Œä¸‹ä¸€è¡Œ
 dcnt = tempDict.Count
 If IsEmpty(dcnt) Then
     Set tempDict = CreateObject("Scripting.Dictionary")
@@ -219,15 +219,15 @@ End If
 'Set paraSheet = ThisWorkbook.Sheets(sheetName)
 
 
-'³õÊ¼»¯²ÎÊı
+'åˆå§‹åŒ–å‚æ•°
 
     cnt = UBound(dataArr)   'paraSheet.UsedRange.Rows(paraSheet.UsedRange.Rows.Count).row
     For i = bgRow To cnt
         If dataArr(i, idCol) <> "" Then
             itemId = dataArr(i, idCol)
-            If valCol > 0 Then    '×ÖµäÏîµÄÖµÁĞºÅ´óÓÚ£¬´Ó¶ÔÓ¦ÓÚÁĞÖĞÈ¡Öµ
+            If valCol > 0 Then    'å­—å…¸é¡¹çš„å€¼åˆ—å·å¤§äºï¼Œä»å¯¹åº”äºåˆ—ä¸­å–å€¼
                 itemVal = CStr(dataArr(i, valCol))
-            Else                 '×ÖµäÏîµÄÖµÁĞºÅĞ¡ÓÚµÈÓÚ0£¬ÔòÌîÈë¶ÔÓ¦ĞĞºÅ
+            Else                 'å­—å…¸é¡¹çš„å€¼åˆ—å·å°äºç­‰äº0ï¼Œåˆ™å¡«å…¥å¯¹åº”è¡Œå·
                 itemVal = i
             End If
             
@@ -242,25 +242,25 @@ End If
 End Sub
 
 
-'ÔËĞĞÇ°ÒıÓÃMicrosoft Visual Basic for Application Extensibility 5.3£¬²¢ÇÒÑ¡ÔñĞÅÈÎ¶ÔVBA¹¤³Ì·ÃÎÊ
+'è¿è¡Œå‰å¼•ç”¨Microsoft Visual Basic for Application Extensibility 5.3ï¼Œå¹¶ä¸”é€‰æ‹©ä¿¡ä»»å¯¹VBAå·¥ç¨‹è®¿é—®
 Sub ExportAllVBC()
     Dim ExportPath As String, ExtendName As String
     Dim vbc As VBComponent
     ExportPath = ThisWorkbook.path
     For Each vbc In Application.VBE.ActiveVBProject.VBComponents
         Select Case vbc.Type
-        Case vbext_ct_ClassModule, vbext_ct_Document '×é¼şÊôĞÔÎªÀàÄ£¿é¡¢EXCEL¶ÔÏó
-            ExtendName = ".cls" 'ÉèÖÃµ¼³öÎÄ¼şµÄÀ©Õ¹Ãû
-        Case vbext_ct_MSForm '×é¼şÊôĞÔÎª´°Ìå
+        Case vbext_ct_ClassModule, vbext_ct_Document 'ç»„ä»¶å±æ€§ä¸ºç±»æ¨¡å—ã€EXCELå¯¹è±¡
+            ExtendName = ".cls" 'è®¾ç½®å¯¼å‡ºæ–‡ä»¶çš„æ‰©å±•å
+        Case vbext_ct_MSForm 'ç»„ä»¶å±æ€§ä¸ºçª—ä½“
             ExtendName = ".frm"
-        Case vbext_ct_StdModule '×é¼şÊôĞÔÎªÄ£¿éÊ±
+        Case vbext_ct_StdModule 'ç»„ä»¶å±æ€§ä¸ºæ¨¡å—æ—¶
             ExtendName = ".bas"
         End Select
         If ExtendName <> "" Then vbc.Export ExportPath & "\code\" & vbc.Name & ExtendName
     Next
 End Sub
 
-'µ¼ÈëËùÓĞµÄ½Å±¾
+'å¯¼å…¥æ‰€æœ‰çš„è„šæœ¬
 Sub ImportAllVBC()
     Dim theMod As VBIDE.VBComponent
     For Each theMod In ThisWorkbook.VBProject.VBComponents
@@ -310,10 +310,10 @@ End Function
 
 
 
-Function getUnixTime()  '»ñÈ¡UnixÊ±¼ä´Á
+Function getUnixTime()  'è·å–Unixæ—¶é—´æˆ³
     getUnixTime = DateDiff("s", "01/01/1970 00:00:00", Now())
 End Function
 
-Function getdateTime(unixTime As Long) 'UNIXÊ±¼ä´Á×ª±±¾©Ê±¼ä
+Function getdateTime(unixTime As Long) 'UNIXæ—¶é—´æˆ³è½¬åŒ—äº¬æ—¶é—´
     getdateTime = DateAdd("s", unixTime, "01/01/1970 00:00:00")
 End Function
